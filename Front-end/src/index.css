@@ -1,0 +1,102 @@
+@import "tailwindcss";
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
+@import "swiper/css/effect-fade";
+
+/* Base */
+body {
+  background: #f9f9f9;
+  color: #18181b;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Hero Swiper */
+.hero-swiper .swiper-pagination-bullet {
+  width: 2rem;
+  height: 0.25rem;
+  border-radius: 0;
+  background: #3f3f46;
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+  background: #39ff14;
+  box-shadow: 0 0 12px rgba(57, 255, 20, 0.6);
+}
+
+.hero-swiper .swiper-button-prev,
+.hero-swiper .swiper-button-next {
+  color: #fff;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.125rem;
+  background: rgba(11, 11, 11, 0.5);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.hero-swiper .swiper-button-prev:hover,
+.hero-swiper .swiper-button-next:hover {
+  border-color: #39ff14;
+  color: #39ff14;
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.35);
+}
+
+.hero-swiper .swiper-button-prev::after,
+.hero-swiper .swiper-button-next::after {
+  font-size: 0.875rem;
+  font-weight: 900;
+}
+
+/* Utilities */
+@layer utilities {
+  .glow-green {
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.4);
+  }
+
+  .glow-green-lg {
+    box-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+  }
+
+  .nav-link-glow {
+    position: relative;
+  }
+
+  .nav-link-glow::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 0;
+    height: 2px;
+    background: #39ff14;
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.8);
+    transition: width 0.3s ease;
+  }
+
+  .nav-link-glow:hover::after {
+    width: 100%;
+  }
+}
+
+/* Components */
+@layer components {
+  .btn-primary {
+    @apply bg-[#39FF14] text-black px-8 py-3 font-black rounded-sm
+    shadow-[0_0_20px_rgba(57,255,20,0.3)]
+    hover:scale-105 hover:shadow-[0_0_30px_rgba(57,255,20,0.6)]
+    active:scale-95 transition-all duration-300 uppercase italic;
+  }
+
+  .section-accent {
+    @apply w-1 h-9 bg-[#39FF14] shadow-[0_0_12px_rgba(57,255,20,0.5)] shrink-0;
+  }
+
+  .section-title {
+    @apply text-[#0B0B0B] font-black text-2xl md:text-3xl italic uppercase tracking-tighter;
+  }
+}
