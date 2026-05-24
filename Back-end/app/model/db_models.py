@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime , Numeric, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, Numeric, ForeignKey
 from sqlalchemy.sql import func
 from database.db import Base
+
 
 class User(Base):
     __tablename__ = "users"
@@ -12,7 +13,6 @@ class User(Base):
     password_hash = Column(Text, nullable=False)
     role = Column(String(20), default="user")  # user/admin
     created_at = Column(DateTime, default=func.current_timestamp())
-    
 
 
 class Category(Base):
@@ -21,8 +21,8 @@ class Category(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), unique=True, nullable=False)
     created_at = Column(DateTime, default=func.current_timestamp())
-    
-    
+
+
 class Product(Base):
     __tablename__ = "products"
 
@@ -46,7 +46,6 @@ class Cart(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), unique=True)
 
     created_at = Column(DateTime, default=func.current_timestamp())
-    
 
 
 class CartItem(Base):
@@ -74,8 +73,8 @@ class Order(Base):
     status = Column(String(20), default="pending")  # pending/paid/shipped/delivered
 
     created_at = Column(DateTime, default=func.current_timestamp())
-    
-    
+
+
 class OrderItem(Base):
     __tablename__ = "order_items"
 
@@ -88,5 +87,3 @@ class OrderItem(Base):
     price = Column(Numeric(10, 2), nullable=False)  # snapshot price
 
     created_at = Column(DateTime, default=func.current_timestamp())
-    
-
