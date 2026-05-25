@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, Numeric, ForeignKey
 from sqlalchemy.sql import func
 from database.db import Base
+from sqlalchemy.orm import relationship
 
 
 class User(Base):
@@ -28,16 +29,60 @@ class Category(Base):
 class Product(Base):
     __tablename__ = "products"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(150), nullable=False)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(150))
     description = Column(Text)
-    price = Column(Numeric(10, 2), nullable=False)
+    price = Column(Numeric(10, 2))
+
+    category_id = Column(Integer, ForeignKey("categories.id"))
+    created_at = Column(DateTime, default=func.current_timestamp())
+
+    # 🔥 RELATIONSHIPS
+    variants = relationship("ProductVariant", back_populates="product", cascade="all, delete")
+
+    configs = relationship("ProductConfig", back_populates="product", cascade="all, delete")
+
+
+class ProductVariant(Base):
+    __tablename__ = "product_variants"
+
+    id = Column(Integer, primary_key=True)
+    product_id = Column(Integer, ForeignKey("products.id", ondelete="CASCADE"))
+
+    color = Column(String(50))
     stock = Column(Integer, default=0)
     image_url = Column(Text)
 
-    category_id = Column(Integer, ForeignKey("categories.id", ondelete="SET NULL"))
-
     created_at = Column(DateTime, default=func.current_timestamp())
+
+    # 🔥 RELATIONSHIP BACK
+    product = relationship("Product", back_populates="variants")
+    
+    
+class ProductConfig(Base):
+    __tablename__ = "product_configs"
+
+    id = Column(Integer, primary_key=True)
+    product_id = Column(Integer, ForeignKey("products.id", ondelete="CASCADE"))
+
+    name = Column(String(100))  # fabric, pockets
+
+    # 🔥 RELATIONSHIPS
+    product = relationship("Product", back_populates="configs")
+
+    options = relationship("ProductConfigOption", back_populates="config", cascade="all, delete")
+    
+
+class ProductConfigOption(Base):
+    __tablename__ = "product_config_options"
+
+    id = Column(Integer, primary_key=True)
+    config_id = Column(Integer, ForeignKey("product_configs.id", ondelete="CASCADE"))
+
+    value = Column(String(100))
+
+    # 🔥 RELATIONSHIP BACK
+    config = relationship("ProductConfig", back_populates="options")
 
 
 class Cart(Base):
