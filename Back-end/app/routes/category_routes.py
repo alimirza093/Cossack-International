@@ -3,6 +3,7 @@ from schemas.category_schema import CateOut
 from sqlalchemy.orm import Session
 from database.db import get_db
 from model.db_models import Category
+from utils.helping_funcs import admin_required
 
 router = APIRouter()
 
@@ -22,3 +23,13 @@ def get_product_by_id(category_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Category not found")
 
     return category
+
+
+@router.post("/post-category")
+def create_category(name: str, db: Session = Depends(get_db), admin = Depends(admin_required)):
+    category = Category(name=name)
+    db.add(category)
+    db.commit()
+    db.refresh(category)
+    return {"message": "Category created successfully", "category": category}
+

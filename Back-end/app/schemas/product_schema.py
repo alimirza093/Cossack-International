@@ -13,3 +13,11 @@ class ProductOut(BaseModel):
     
     class Config:
         from_attributes = True
+
+class ProductCreate(BaseModel):
+    name: str
+    description: str
+    price: float
+    category_id: int
+    stock: int 
+    

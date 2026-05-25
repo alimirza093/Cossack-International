@@ -13,6 +13,8 @@ class User(Base):
     password_hash = Column(Text, nullable=False)
     role = Column(String(20), default="user")  # user/admin
     created_at = Column(DateTime, default=func.current_timestamp())
+    phone_number = Column(String(20), nullable=True)
+    address = Column(Text, nullable=True)
 
 
 class Category(Base):

@@ -47,5 +47,8 @@ cffi==2.0.0
 pycparser==3.0
 six==1.17.0
 
+# --- Media uploads ---
+cloudinary==1.44.2
+
 # --- Shared utilities ---
 idna==3.16
