@@ -1,8 +1,13 @@
+from uuid import UUID
+
 from pydantic import BaseModel
 
 
+class CategoryCreate(BaseModel):
+    name: str
+
 class CateOut(BaseModel):
-    id: int
+    id: UUID
     name: str
 
     class Config:

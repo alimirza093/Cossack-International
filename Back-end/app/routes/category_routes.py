@@ -1,3 +1,5 @@
+from uuid import UUID
+from schemas.category_schema import CategoryCreate
 from fastapi import APIRouter, Depends, HTTPException
 from schemas.category_schema import CateOut
 from sqlalchemy.orm import Session
@@ -16,7 +18,7 @@ def get_categories(db: Session = Depends(get_db)):
 
 
 @router.get("/categories/{category_id}", response_model=CateOut)
-def get_product_by_id(category_id: int, db: Session = Depends(get_db)):
+def get_category_by_id(category_id: UUID, db: Session = Depends(get_db)):
     category = db.query(Category).filter(Category.id == category_id).first()
 
     if not category:
@@ -26,8 +28,10 @@ def get_product_by_id(category_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/post-category")
-def create_category(name: str, db: Session = Depends(get_db), admin = Depends(admin_required)):
-    category = Category(name=name)
+def create_category(data: CategoryCreate, db: Session = Depends(get_db), admin = Depends(admin_required)):
+    category = Category(
+        name=data.name
+    )
     db.add(category)
     db.commit()
     db.refresh(category)
