@@ -1,10 +1,12 @@
+import cloudinary.uploader
 from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+
+from auth.jwt_handler import verify_token
 from database.db import get_db
 from model.db_models import User
-from auth.jwt_handler import verify_token
-from fastapi.security import OAuth2PasswordBearer
-import cloudinary.uploader
+from utils.uuid_utils import parse_uuid
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
@@ -19,7 +21,9 @@ def get_current_user(
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-    user_id = payload.get("user_id")
+    user_id = parse_uuid(payload.get("user_id"))
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
     user = db.query(User).filter(User.id == user_id).first()
 

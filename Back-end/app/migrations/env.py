@@ -1,6 +1,19 @@
 from logging.config import fileConfig
 from database.db import Base
-from model.db_models import User, Category, Product, Cart, CartItem
+from model.db_models import (  # noqa: F401 — register models for autogenerate
+    Cart,
+    CartItem,
+    Category,
+    Order,
+    OrderItem,
+    Product,
+    ProductConfig,
+    ProductConfigOption,
+    ProductImage,
+    ProductStaticConfig,
+    ProductVariant,
+    User,
+)
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
