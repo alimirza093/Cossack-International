@@ -35,7 +35,7 @@ def login(data: UserLogin, db: Session = Depends(get_db)):
     if not user or not verify_password(data.password, user.password_hash):
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
-    token = create_token({"user_id": user.id, "role": user.role})
+    token = create_token({"user_id": str(user.id), "role": user.role})
 
     return {
         "message": "Login successful",
@@ -57,7 +57,11 @@ def get_current_user(
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-    user_id = payload.get("user_id")
+    from utils.uuid_utils import parse_uuid
+
+    user_id = parse_uuid(payload.get("user_id"))
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
     user = db.query(User).filter(User.id == user_id).first()
 

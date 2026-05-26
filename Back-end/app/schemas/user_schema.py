@@ -1,7 +1,9 @@
+from uuid import UUID
+
 from pydantic import BaseModel, EmailStr
 
 class UserProfileOut(BaseModel):
-    id: int
+    id: UUID
     first_name: str
     last_name: str
     email: EmailStr
