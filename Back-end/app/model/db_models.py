@@ -47,7 +47,6 @@ class ConfigType(str, enum.Enum):
     """Dynamic config category — drives pricing rules for size/color vs custom."""
 
     size = "size"
-    color = "color"
     custom = "custom"
 
 
@@ -86,6 +85,7 @@ class ProductVariant(Base):
     )
     color = Column(String(50))
     stock = Column(Integer, default=0)
+    price_modifier = Column(Numeric(10, 2), default=0)
     created_at = Column(DateTime, default=func.current_timestamp())
 
     product = relationship("Product", back_populates="variants")
@@ -118,7 +118,7 @@ class ProductConfig(Base):
     product_id = Column(
         UUID(as_uuid=True), ForeignKey("products.id", ondelete="CASCADE")
     )
-    name = Column(String(100))  # e.g. "size", "color", "sleeves"
+    name = Column(String(100))
     type = Column(Enum(ConfigType), default=ConfigType.custom)
 
     product = relationship("Product", back_populates="configs")
