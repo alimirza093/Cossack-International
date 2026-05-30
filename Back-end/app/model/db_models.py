@@ -181,8 +181,7 @@ class CartItem(Base):
     variant_id = Column(
         UUID(as_uuid=True), ForeignKey("product_variants.id", ondelete="SET NULL")
     )
-    # Snapshot of chosen dynamic options, e.g. {"size": "Large", "color": "Green"}
-    selected_options = Column(JSON, default=dict)
+    selected_options = Column(JSON, default=list)
     final_price = Column(Numeric(10, 2), nullable=False, default=0.0)
     quantity = Column(Integer, default=1)
     created_at = Column(DateTime, default=func.current_timestamp())
