@@ -39,7 +39,7 @@ class Category(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String(100), unique=True, nullable=False)
     created_at = Column(DateTime, default=func.current_timestamp())
-    
+
     products = relationship("Product", back_populates="category")
 
 
@@ -57,9 +57,9 @@ class Product(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String(150))
     description = Column(Text)
-    # Renamed from price: catalog base before variant/config modifiers
     base_price = Column(Numeric(10, 2))
     base_image = Column(Text)
+    is_deleted = Column(Boolean, default=False, nullable=False)
     category_id = Column(UUID(as_uuid=True), ForeignKey("categories.id"))
     created_at = Column(DateTime, default=func.current_timestamp())
 
@@ -81,7 +81,9 @@ class ProductVariant(Base):
     __tablename__ = "product_variants"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    product_id = Column(UUID(as_uuid=True), ForeignKey("products.id", ondelete="CASCADE"))
+    product_id = Column(
+        UUID(as_uuid=True), ForeignKey("products.id", ondelete="CASCADE")
+    )
     color = Column(String(50))
     stock = Column(Integer, default=0)
     created_at = Column(DateTime, default=func.current_timestamp())
@@ -98,7 +100,9 @@ class ProductImage(Base):
     __tablename__ = "product_images"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    variant_id = Column(UUID(as_uuid=True), ForeignKey("product_variants.id", ondelete="CASCADE"))
+    variant_id = Column(
+        UUID(as_uuid=True), ForeignKey("product_variants.id", ondelete="CASCADE")
+    )
     image_url = Column(Text, nullable=False)
     is_primary = Column(Boolean, default=False)
 
@@ -111,7 +115,9 @@ class ProductConfig(Base):
     __tablename__ = "product_configs"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    product_id = Column(UUID(as_uuid=True), ForeignKey("products.id", ondelete="CASCADE"))
+    product_id = Column(
+        UUID(as_uuid=True), ForeignKey("products.id", ondelete="CASCADE")
+    )
     name = Column(String(100))  # e.g. "size", "color", "sleeves"
     type = Column(Enum(ConfigType), default=ConfigType.custom)
 
@@ -125,7 +131,9 @@ class ProductConfigOption(Base):
     __tablename__ = "product_config_options"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    config_id = Column(UUID(as_uuid=True), ForeignKey("product_configs.id", ondelete="CASCADE"))
+    config_id = Column(
+        UUID(as_uuid=True), ForeignKey("product_configs.id", ondelete="CASCADE")
+    )
     value = Column(String(100))
     price_modifier = Column(Numeric(10, 2), default=0)
 
@@ -138,7 +146,9 @@ class ProductStaticConfig(Base):
     __tablename__ = "product_static_configs"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    product_id = Column(UUID(as_uuid=True), ForeignKey("products.id", ondelete="CASCADE"))
+    product_id = Column(
+        UUID(as_uuid=True), ForeignKey("products.id", ondelete="CASCADE")
+    )
     key = Column(String(100), nullable=False)
     value = Column(String(255), nullable=False)
 
@@ -149,10 +159,15 @@ class Cart(Base):
     __tablename__ = "cart"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), unique=True)
+    user_id = Column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), unique=True
+    )
+    grand_total = Column(Numeric(10, 2), nullable=False, default=0.0)
     created_at = Column(DateTime, default=func.current_timestamp())
 
-    items = relationship("CartItem", back_populates="cart", cascade="all, delete-orphan")
+    items = relationship(
+        "CartItem", back_populates="cart", cascade="all, delete-orphan"
+    )
 
 
 class CartItem(Base):
@@ -160,11 +175,15 @@ class CartItem(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     cart_id = Column(UUID(as_uuid=True), ForeignKey("cart.id", ondelete="CASCADE"))
-    product_id = Column(UUID(as_uuid=True), ForeignKey("products.id", ondelete="CASCADE"))
-    variant_id = Column(UUID(as_uuid=True), ForeignKey("product_variants.id", ondelete="SET NULL"))
+    product_id = Column(
+        UUID(as_uuid=True), ForeignKey("products.id", ondelete="CASCADE")
+    )
+    variant_id = Column(
+        UUID(as_uuid=True), ForeignKey("product_variants.id", ondelete="SET NULL")
+    )
     # Snapshot of chosen dynamic options, e.g. {"size": "Large", "color": "Green"}
     selected_options = Column(JSON, default=dict)
-    final_price = Column(Numeric(10, 2), nullable=False)
+    final_price = Column(Numeric(10, 2), nullable=False, default=0.0)
     quantity = Column(Integer, default=1)
     created_at = Column(DateTime, default=func.current_timestamp())
 
@@ -182,7 +201,9 @@ class Order(Base):
     status = Column(String(20), default="pending")
     created_at = Column(DateTime, default=func.current_timestamp())
 
-    items = relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")
+    items = relationship(
+        "OrderItem", back_populates="order", cascade="all, delete-orphan"
+    )
 
 
 class OrderItem(Base):
@@ -192,8 +213,12 @@ class OrderItem(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     order_id = Column(UUID(as_uuid=True), ForeignKey("orders.id", ondelete="CASCADE"))
-    product_id = Column(UUID(as_uuid=True), ForeignKey("products.id", ondelete="SET NULL"))
-    variant_id = Column(UUID(as_uuid=True), ForeignKey("product_variants.id", ondelete="SET NULL"))
+    product_id = Column(
+        UUID(as_uuid=True), ForeignKey("products.id", ondelete="SET NULL")
+    )
+    variant_id = Column(
+        UUID(as_uuid=True), ForeignKey("product_variants.id", ondelete="SET NULL")
+    )
     selected_options = Column(JSON, default=dict)
     final_price = Column(Numeric(10, 2), nullable=False)
     quantity = Column(Integer, nullable=False)
