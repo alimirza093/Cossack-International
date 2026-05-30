@@ -7,7 +7,8 @@ load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+# valid for 7 days
+ACCESS_TOKEN_EXPIRE_MINUTES = 10080
 
 
 def create_access_token(data: dict):
