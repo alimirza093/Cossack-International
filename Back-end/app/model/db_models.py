@@ -221,6 +221,7 @@ class OrderItem(Base):
     )
     selected_options = Column(JSON, default=list)
     final_price = Column(Numeric(10, 2), nullable=False)
+    item_total = Column(Numeric(10, 2), nullable=False, default=0.0)
     quantity = Column(Integer, nullable=False)
     created_at = Column(DateTime, default=func.current_timestamp())
 
