@@ -10,8 +10,11 @@ from schemas.product_schema import ProductOut
 
 class SelectedOptionOut(BaseModel):
     config_id: UUID
+    config_name: str
     option_id: UUID
-
+    option_value: str
+    price_modifier: Decimal
+    
     class Config:
         from_attributes = True
 
@@ -20,6 +23,7 @@ class VariantCartOut(BaseModel):
     id: UUID
     color: str
     stock: int
+    price_modifier: Decimal
 
     class Config:
         from_attributes = True
@@ -40,11 +44,11 @@ class CartItemOut(BaseModel):
 
 
 class CartOut(BaseModel):
-    id: UUID
+    id: Optional[UUID] = None
     user_id: UUID
     grand_total: Decimal
     items: list[CartItemOut] = Field(default_factory=list)
-    created_at: datetime
+    created_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True

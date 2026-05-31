@@ -14,7 +14,7 @@ from model.db_models import (
 )
 from auth.jwt_handler import verify_token
 from utils.uuid_utils import parse_uuid
-from schemas.cart_schema import CartItemCreate, UpdateQuantity
+from schemas.cart_schema import CartItemCreate, UpdateQuantity, CartOut
 from decimal import Decimal
 
 router = APIRouter()
@@ -22,7 +22,7 @@ router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
-@router.get("/", status_code=200)
+@router.get("/", status_code=200, response_model=CartOut)
 def get_cart(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
 
     payload = verify_token(token)
@@ -323,7 +323,8 @@ def clear_cart(
         "message": "Cart cleared successfully",
         "grand_total": cart.grand_total,
     }
-    
+
+
 @router.patch("/item/{cart_item_id}/quantity")
 def update_cart_item_quantity(
     cart_item_id: UUID,
@@ -344,11 +345,7 @@ def update_cart_item_quantity(
             detail="Quantity must be greater than 0",
         )
 
-    cart = (
-        db.query(Cart)
-        .filter(Cart.user_id == user_id)
-        .first()
-    )
+    cart = db.query(Cart).filter(Cart.user_id == user_id).first()
 
     if not cart:
         raise HTTPException(
@@ -387,10 +384,7 @@ def update_cart_item_quantity(
         )
 
     cart_item.quantity = data.quantity
-    cart_item.item_total = (
-        Decimal(str(cart_item.final_price))
-        * data.quantity
-    )
+    cart_item.item_total = Decimal(str(cart_item.final_price)) * data.quantity
 
     db.flush()
 

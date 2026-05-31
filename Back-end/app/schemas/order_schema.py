@@ -1,20 +1,52 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Optional
 from uuid import UUID
-
 from pydantic import BaseModel, Field
-
 from schemas.product_schema import ProductOut
+from enum import Enum
+
+
+class OrderStatus(str, Enum):
+    pending = "pending"
+    processing = "processing"
+    shipped = "shipped"
+    delivered = "delivered"
+    cancelled = "cancelled"
+
+
+class UpdateOrderStatus(BaseModel):
+    status: OrderStatus
+
+
+class VariantOrderOut(BaseModel):
+    id: UUID
+    color: str
+    price_modifier: Decimal
+
+    class Config:
+        from_attributes = True
+
+
+class SelectedOrderOptionOut(BaseModel):
+    config_id: UUID
+    config_name: str
+    option_id: UUID
+    option_value: str
+    price_modifier: Decimal
+
+    class Config:
+        from_attributes = True
 
 
 class OrderItemOut(BaseModel):
     id: UUID
-    quantity: int
     product: Optional[ProductOut] = None
-    variant_id: Optional[UUID] = None
-    selected_options: dict[str, Any] = Field(default_factory=dict)
+    variant: Optional[VariantOrderOut] = None
+    selected_options: list[SelectedOrderOptionOut] = Field(default_factory=list)
+    quantity: int
     final_price: Decimal
+    item_total: Decimal
     created_at: datetime
 
     class Config:
@@ -31,3 +63,7 @@ class OrderOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class CreateOrderRequest(BaseModel):
+    cart_item_ids: list[UUID]
