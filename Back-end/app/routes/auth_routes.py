@@ -16,6 +16,18 @@ router = APIRouter()
 
 @router.post("/register")
 def register(data: UserCreate, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == data.email).first()
+    if user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    if len(data.password) < 8:
+        raise HTTPException(
+            status_code=400, detail="Password must be at least 8 characters long"
+        )
+    if len(data.first_name) < 2 or len(data.last_name) < 2:
+        raise HTTPException(
+            status_code=400,
+            detail="First name and last name must be at least 2 characters long",
+        )
     user = User(
         first_name=data.first_name,
         last_name=data.last_name,
