@@ -219,7 +219,7 @@ class OrderItem(Base):
     variant_id = Column(
         UUID(as_uuid=True), ForeignKey("product_variants.id", ondelete="SET NULL")
     )
-    selected_options = Column(JSON, default=dict)
+    selected_options = Column(JSON, default=list)
     final_price = Column(Numeric(10, 2), nullable=False)
     quantity = Column(Integer, nullable=False)
     created_at = Column(DateTime, default=func.current_timestamp())
