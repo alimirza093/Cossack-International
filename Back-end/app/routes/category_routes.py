@@ -10,7 +10,7 @@ from utils.helping_funcs import admin_required
 router = APIRouter()
 
 
-@router.get("/categories", response_model=list[CateOut])
+@router.get("/", response_model=list[CateOut])
 def get_categories(db: Session = Depends(get_db)):
     categories = db.query(Category).all()
 
@@ -36,4 +36,25 @@ def create_category(data: CategoryCreate, db: Session = Depends(get_db), admin =
     db.commit()
     db.refresh(category)
     return {"message": "Category created successfully", "category": category}
+
+
+@router.put("/update-category/{category_id}")
+def update_category(category_id: UUID,data: CategoryCreate, db: Session = Depends(get_db) , admin = Depends(admin_required)):
+    category = db.query(Category).filter(Category.id == category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    category.name = data.name
+    db.commit()
+    db.refresh(category)
+    return {"message": "Category updated successfully", "category": category}
+
+
+@router.delete("/delete-category/{category_id}")
+def delete_category(category_id: UUID, db: Session = Depends(get_db) , admin = Depends(admin_required)):
+    category = db.query(Category).filter(Category.id == category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    db.delete(category)
+    db.commit()
+    return {"message": "Category deleted successfully"}
 
