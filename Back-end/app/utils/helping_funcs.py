@@ -1,12 +1,14 @@
 import cloudinary.uploader
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session , joinedload 
+from sqlalchemy import Boolean
 
 from auth.jwt_handler import verify_token
 from database.db import get_db
-from model.db_models import User
+from model.db_models import User, Product, ProductConfig, ProductConfigOption, ProductImage, ProductStaticConfig, ProductVariant
 from utils.uuid_utils import parse_uuid
+from uuid import UUID
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
@@ -43,3 +45,227 @@ def admin_required(current_user = Depends(get_current_user)):
 def upload_image(file):
     result = cloudinary.uploader.upload(file)
     return result.get("secure_url")
+
+
+
+PRODUCT_LOAD_OPTIONS = (
+    joinedload(Product.static_configs),
+    joinedload(Product.configs).joinedload(ProductConfig.options),
+    joinedload(Product.variants).joinedload(ProductVariant.images),
+)
+
+def load_product(db: Session, product_id: UUID, is_del: Boolean = False) -> Product | None:
+    return (
+        db.query(Product)
+        .options(*PRODUCT_LOAD_OPTIONS)
+        .filter(Product.id == product_id , Product.is_deleted == is_del)
+        .first()
+    )
+
+
+def upsert_static_config(db: Session, product_id: UUID, cfg) -> None:
+    existing = None
+    if cfg.id:
+        existing = (
+            db.query(ProductStaticConfig)
+            .filter(
+                ProductStaticConfig.id == cfg.id,
+                ProductStaticConfig.product_id == product_id,
+            )
+            .first()
+        )
+        if not existing:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Static config {cfg.id} not found for this product",
+            )
+    elif cfg.key:
+        existing = (
+            db.query(ProductStaticConfig)
+            .filter(
+                ProductStaticConfig.product_id == product_id,
+                ProductStaticConfig.key == cfg.key,
+            )
+            .first()
+        )
+
+    if existing:
+        if cfg.key is not None:
+            existing.key = cfg.key
+        if cfg.value is not None:
+            existing.value = cfg.value
+        return
+
+    if not cfg.key or cfg.value is None:
+        raise HTTPException(
+            status_code=400,
+            detail="New static config requires both key and value",
+        )
+    db.add(
+        ProductStaticConfig(
+            product_id=product_id,
+            key=cfg.key,
+            value=cfg.value,
+        )
+    )
+
+
+def upsert_dynamic_config(db: Session, product_id: UUID, cfg) -> ProductConfig:
+    config = None
+    if cfg.id:
+        config = (
+            db.query(ProductConfig)
+            .filter(
+                ProductConfig.id == cfg.id,
+                ProductConfig.product_id == product_id,
+            )
+            .first()
+        )
+        if not config:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Dynamic config {cfg.id} not found for this product",
+            )
+    elif cfg.name:
+        config = (
+            db.query(ProductConfig)
+            .filter(
+                ProductConfig.product_id == product_id,
+                ProductConfig.name == cfg.name,
+            )
+            .first()
+        )
+
+    if not config:
+        if not cfg.name or cfg.type is None:
+            raise HTTPException(
+                status_code=400,
+                detail="New dynamic config requires name and type",
+            )
+        config = ProductConfig(
+            product_id=product_id,
+            name=cfg.name,
+            type=cfg.type,
+        )
+        db.add(config)
+        db.flush()
+        return config
+
+    if cfg.name is not None:
+        config.name = cfg.name
+    if cfg.type is not None:
+        config.type = cfg.type
+    return config
+
+
+def upsert_config_option(db: Session, config: ProductConfig, opt) -> None:
+    option = None
+    if opt.id:
+        option = (
+            db.query(ProductConfigOption)
+            .filter(
+                ProductConfigOption.id == opt.id,
+                ProductConfigOption.config_id == config.id,
+            )
+            .first()
+        )
+        if not option:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Config option {opt.id} not found for this config",
+            )
+    elif opt.value:
+        option = (
+            db.query(ProductConfigOption)
+            .filter(
+                ProductConfigOption.config_id == config.id,
+                ProductConfigOption.value == opt.value,
+            )
+            .first()
+        )
+
+    if not option:
+        if opt.value is None:
+            raise HTTPException(
+                status_code=400,
+                detail="New config option requires value",
+            )
+        db.add(
+            ProductConfigOption(
+                config_id=config.id,
+                value=opt.value,
+                price_modifier=opt.price_modifier or 0,
+            )
+        )
+        return
+
+    if opt.value is not None:
+        option.value = opt.value
+    if opt.price_modifier is not None:
+        option.price_modifier = opt.price_modifier
+
+
+def upsert_variant(db: Session, product_id: UUID, var) -> ProductVariant:
+    variant = None
+    if var.id:
+        variant = (
+            db.query(ProductVariant)
+            .filter(
+                ProductVariant.id == var.id,
+                ProductVariant.product_id == product_id,
+            )
+            .first()
+        )
+        if not variant:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Variant {var.id} not found for this product",
+            )
+    elif var.color:
+        variant = (
+            db.query(ProductVariant)
+            .filter(
+                ProductVariant.product_id == product_id,
+                ProductVariant.color == var.color,
+            )
+            .first()
+        )
+
+    if not variant:
+        if not var.color or var.stock is None:
+            raise HTTPException(
+                status_code=400,
+                detail="New variant requires color and stock",
+            )
+        variant = ProductVariant(
+            product_id=product_id,
+            color=var.color,
+            stock=var.stock,
+        )
+        db.add(variant)
+        db.flush()
+        return variant
+
+    if var.color is not None:
+        variant.color = var.color
+    if var.stock is not None:
+        variant.stock = var.stock
+    return variant
+
+
+def replace_variant_images(db: Session, variant: ProductVariant, images) -> None:
+    db.query(ProductImage).filter(ProductImage.variant_id == variant.id).delete()
+    if not images:
+        return
+
+    has_primary = any(img.is_primary for img in images if img.is_primary is not None)
+    for idx, img in enumerate(images):
+        if not img.image_url:
+            continue
+        db.add(
+            ProductImage(
+                variant_id=variant.id,
+                image_url=img.image_url,
+                is_primary=img.is_primary if has_primary else idx == 0,
+            )
+        )

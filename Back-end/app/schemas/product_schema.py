@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Any, Optional,List
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -28,7 +28,7 @@ class DynamicConfigCreate(BaseModel):
 
 
 class VariantImageCreate(BaseModel):
-    image_url: str
+    image_url: Optional[str] = None
     is_primary: bool = False
 
 
@@ -36,6 +36,8 @@ class VariantCreate(BaseModel):
     color: str
     stock: int = 0
     images: list[VariantImageCreate] = Field(default_factory=list)
+    price_modifier: Decimal = 0
+
 
 
 class ProductFullCreate(BaseModel):
@@ -66,6 +68,7 @@ class ProductVariantOut(BaseModel):
     id: UUID
     color: str
     stock: int
+    price_modifier: Decimal
     images: list[ProductImageOut] = Field(default_factory=list)
 
     class Config:
@@ -123,3 +126,49 @@ class ProductCreate(BaseModel):
     description: str
     base_price: Decimal
     category_id: UUID
+
+
+#Update Schemas
+
+
+class StaticConfigUpdate(BaseModel):
+    id: Optional[UUID] = None
+    key: Optional[str] = None
+    value: Optional[str] = None
+    
+
+class ConfigOptionUpdate(BaseModel):
+    id: Optional[UUID] = None
+    value: Optional[str] = None
+    price_modifier: Optional[Decimal] = None
+    
+    
+class DynamicConfigUpdate(BaseModel):
+    id: Optional[UUID] = None
+    name: Optional[str] = None
+    type: Optional[str] = None
+    options: Optional[List[ConfigOptionUpdate]] = []
+    
+
+class VariantImageUpdate(BaseModel):
+    id: Optional[UUID] = None
+    image_url: Optional[str] = None
+    is_primary: Optional[bool] = None
+    
+class VariantUpdate(BaseModel):
+    id: Optional[UUID] = None
+    color: Optional[str] = None
+    stock: Optional[int] = None
+    images: Optional[List[VariantImageUpdate]] = []
+    
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    base_price: Optional[Decimal] = None
+    category_id: Optional[UUID] = None
+    base_image: Optional[str] = None
+
+    static_configs: Optional[List[StaticConfigUpdate]] = []
+    dynamic_configs: Optional[List[DynamicConfigUpdate]] = []
+    variants: Optional[List[VariantUpdate]] = []
+    
