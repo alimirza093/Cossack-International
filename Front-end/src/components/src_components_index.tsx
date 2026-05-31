@@ -1,8 +1,97 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination, EffectFade } from 'swiper/modules';
+import { useAuth } from '../context/AuthContext';
 
 const NAV_LINKS = ['Shop', 'Collections', 'About', 'Contact'];
+
+const NavbarAuthControls: React.FC = () => {
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [menuOpen]);
+
+  const handleLogout = () => {
+    logout();
+    setMenuOpen(false);
+    navigate('/');
+  };
+
+  if (isLoading) {
+    return <div className="w-20 h-8 bg-zinc-800 rounded-sm animate-pulse" aria-hidden />;
+  }
+
+  if (!isAuthenticated || !user) {
+    return (
+      <div className="flex items-center gap-2 sm:gap-3">
+        <Link
+          to="/login"
+          className="text-zinc-300 text-[10px] font-black uppercase tracking-widest hover:text-[#39FF14] transition-colors px-2 py-1"
+        >
+          Login
+        </Link>
+        <Link
+          to="/register"
+          className="bg-[#39FF14] text-[#0B0B0B] px-3 sm:px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-sm hover:shadow-[0_0_20px_rgba(57,255,20,0.45)] transition-all"
+        >
+          Register
+        </Link>
+      </div>
+    );
+  }
+
+  const initials = `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase();
+
+  return (
+    <div className="relative" ref={menuRef}>
+      <button
+        type="button"
+        onClick={() => setMenuOpen((o) => !o)}
+        className="flex items-center gap-2 text-zinc-300 hover:text-white transition-colors"
+        aria-expanded={menuOpen}
+        aria-haspopup="true"
+        aria-label="User menu"
+      >
+        <span className="w-8 h-8 rounded-sm bg-zinc-800 border border-zinc-700 flex items-center justify-center text-[10px] font-black text-[#39FF14]">
+          {initials}
+        </span>
+        <span className="hidden sm:block text-[10px] font-black uppercase tracking-widest max-w-[100px] truncate">
+          {user.first_name}
+        </span>
+        <span className="material-icons-round text-lg text-zinc-500">expand_more</span>
+      </button>
+      {menuOpen && (
+        <div className="absolute right-0 top-full mt-2 w-56 bg-[#0B0B0B] border border-zinc-800 rounded-sm shadow-[0_8px_30px_rgba(0,0,0,0.45)] py-2 z-50">
+          <div className="px-4 py-3 border-b border-zinc-800">
+            <p className="text-white text-xs font-bold truncate">
+              {user.first_name} {user.last_name}
+            </p>
+            <p className="text-zinc-500 text-[10px] truncate mt-0.5">{user.email}</p>
+          </div>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#39FF14] hover:bg-zinc-900/80 transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 // --- Navbar ---
 interface NavbarProps {
@@ -33,13 +122,13 @@ export const Navbar: React.FC<NavbarProps> = ({ logo }) => {
           >
             menu
           </button>
-          <a
-            href="#"
+          <Link
+            to="/"
             className="text-[#39FF14] font-black text-lg sm:text-xl tracking-tighter uppercase italic shrink-0"
             style={{ textShadow: '0 0 20px rgba(57,255,20,0.35)' }}
           >
             {logo}
-          </a>
+          </Link>
           <ul className="hidden lg:flex items-center gap-8">
             {NAV_LINKS.map((link) => (
               <li key={link}>
@@ -53,7 +142,7 @@ export const Navbar: React.FC<NavbarProps> = ({ logo }) => {
             ))}
           </ul>
         </div>
-        <div className="flex items-center gap-4 sm:gap-5 text-white">
+        <div className="flex items-center gap-3 sm:gap-4 text-white">
           <button
             type="button"
             className="material-icons-round text-zinc-400 hover:text-[#39FF14] hover:drop-shadow-[0_0_8px_rgba(57,255,20,0.6)] transition-all"
@@ -61,18 +150,16 @@ export const Navbar: React.FC<NavbarProps> = ({ logo }) => {
           >
             search
           </button>
-          <button
-            type="button"
+          <Link
+            to="/cart"
             className="relative group"
             aria-label="Cart"
           >
             <span className="material-icons-round text-zinc-300 group-hover:text-[#39FF14] transition-colors">
               shopping_cart
             </span>
-            <span className="absolute -top-2 -right-2 bg-[#39FF14] text-[#0B0B0B] text-[10px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full shadow-[0_0_12px_rgba(57,255,20,0.6)]">
-              2
-            </span>
-          </button>
+          </Link>
+          <NavbarAuthControls />
         </div>
       </div>
     </nav>
@@ -108,6 +195,8 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ slides }) => (
             <img
               src={slide.image}
               alt={slide.title}
+              loading={index === 0 ? 'eager' : 'lazy'}
+              decoding="async"
               className="absolute inset-0 w-full h-full object-cover scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0B]/90 via-[#0B0B0B]/55 to-[#0B0B0B]/30" />
@@ -145,6 +234,8 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ title, image }) => (
     <img
       src={image}
       alt={title}
+      loading="lazy"
+      decoding="async"
       className="w-full h-full object-cover opacity-50 group-hover:opacity-70 group-hover:scale-110 transition-all duration-700"
     />
     <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-[#0B0B0B]/30 to-transparent" />
@@ -161,46 +252,123 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ title, image }) => (
 );
 
 // --- ProductCard ---
+const MAX_COLOR_SWATCHES = 5;
+
+function colorToSwatchStyle(color: string): React.CSSProperties {
+  const trimmed = color.trim();
+  if (/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(trimmed)) {
+    return { backgroundColor: trimmed };
+  }
+  return { backgroundColor: trimmed };
+}
+
 interface ProductCardProps {
+  productId: string;
   name: string;
   price: number;
   image: string;
+  categoryName?: string;
   badge?: string;
+  colors?: string[];
+  configOptionsCount?: number;
+  onQuickView?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ name, price, image, badge }) => (
-  <article className="group bg-white rounded-sm overflow-hidden border border-zinc-100 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)]">
-    <div className="relative aspect-square overflow-hidden bg-zinc-50">
-      {badge && (
-        <span className="absolute top-3 left-3 z-10 bg-[#39FF14] text-[#0B0B0B] text-[9px] font-black px-2.5 py-1 rounded-sm uppercase tracking-wider shadow-[0_0_12px_rgba(57,255,20,0.4)]">
-          {badge}
-        </span>
-      )}
-      <img
-        src={image}
-        alt={name}
-        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-      />
-      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
-    </div>
-    <div className="p-4 sm:p-5">
-      <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Cossack</p>
-      <h3 className="text-sm font-bold text-[#0B0B0B] leading-snug mb-1 line-clamp-2 min-h-[2.5rem]">
-        {name}
-      </h3>
-      <p className="text-[#0B0B0B] font-black text-lg mb-4">${price.toFixed(2)}</p>
-      <button
-        type="button"
-        className="w-full bg-[#0B0B0B] text-white py-3.5 rounded-sm font-black text-[10px] flex items-center justify-center gap-2 uppercase tracking-widest transition-all duration-300 hover:bg-[#39FF14] hover:text-[#0B0B0B] hover:shadow-[0_0_25px_rgba(57,255,20,0.45)] group/btn"
-      >
-        <span className="material-icons-round text-base transition-transform group-hover/btn:scale-110">
-          add_shopping_cart
-        </span>
-        Add to Cart
-      </button>
-    </div>
-  </article>
-);
+const ProductCardComponent: React.FC<ProductCardProps> = ({
+  productId,
+  name,
+  price,
+  image,
+  categoryName = 'Cossack',
+  badge,
+  colors = [],
+  configOptionsCount = 0,
+  onQuickView,
+}) => {
+  const visibleColors = colors.slice(0, MAX_COLOR_SWATCHES);
+  const extraColors = colors.length - visibleColors.length;
+
+  const handleQuickView = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onQuickView?.(e);
+  };
+
+  return (
+    <Link
+      to={`/products/${productId}`}
+      className="block group bg-white rounded-sm overflow-hidden border border-zinc-100 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)]"
+    >
+      <article>
+        <div className="relative aspect-square overflow-hidden bg-zinc-50">
+          {badge && (
+            <span className="absolute top-3 left-3 z-10 bg-[#39FF14] text-[#0B0B0B] text-[9px] font-black px-2.5 py-1 rounded-sm uppercase tracking-wider shadow-[0_0_12px_rgba(57,255,20,0.4)]">
+              {badge}
+            </span>
+          )}
+          <img
+            src={image}
+            alt={name}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
+          {onQuickView && (
+            <button
+              type="button"
+              onClick={handleQuickView}
+              className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 bg-white/95 text-[#0B0B0B] px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-sm border border-zinc-200 hover:border-[#39FF14] hover:text-[#0B0B0B] shadow-lg"
+            >
+              Quick View
+            </button>
+          )}
+        </div>
+        <div className="p-4 sm:p-5">
+          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1 line-clamp-1">
+            {categoryName}
+          </p>
+          <h3 className="text-sm font-bold text-[#0B0B0B] leading-snug mb-1 line-clamp-2 min-h-[2.5rem]">
+            {name}
+          </h3>
+          <p className="text-[#0B0B0B] font-black text-lg mb-2">${price.toFixed(2)}</p>
+
+          {(visibleColors.length > 0 || configOptionsCount > 0) && (
+            <div className="flex flex-wrap items-center gap-2 min-h-[1.25rem]">
+              {visibleColors.length > 0 && (
+                <div className="flex items-center gap-1.5">
+                  <div className="flex -space-x-1">
+                    {visibleColors.map((color) => (
+                      <span
+                        key={color}
+                        title={color}
+                        className="w-4 h-4 rounded-full border border-white shadow-sm shrink-0"
+                        style={colorToSwatchStyle(color)}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
+                    {colors.length} {colors.length === 1 ? 'color' : 'colors'}
+                  </span>
+                  {extraColors > 0 && (
+                    <span className="text-[9px] text-zinc-400">+{extraColors}</span>
+                  )}
+                </div>
+              )}
+              {configOptionsCount > 0 && (
+                <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
+                  {configOptionsCount} {configOptionsCount === 1 ? 'option' : 'options'}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      </article>
+    </Link>
+  );
+};
+
+export const ProductCard = React.memo(ProductCardComponent);
 
 // --- WhyUsCard ---
 interface WhyUsCardProps {
@@ -222,13 +390,18 @@ export const WhyUsCard: React.FC<WhyUsCardProps> = ({ icon, title, desc }) => (
 );
 
 // --- Footer ---
-const FOOTER_LINKS = {
-  shop: ['Women', 'Men', 'Industrial', 'New Arrivals'],
-  company: ['About', 'Careers', 'Sustainability', 'Press'],
-  support: ['Contact', 'Shipping', 'Returns', 'FAQ'],
-};
+const FOOTER_COMPANY = ['About', 'Careers', 'Sustainability', 'Press'];
+const FOOTER_SUPPORT = ['Contact', 'Shipping', 'Returns', 'FAQ'];
 
-export const Footer: React.FC = () => (
+interface FooterProps {
+  categoryNames?: string[];
+}
+
+export const Footer: React.FC<FooterProps> = ({ categoryNames = [] }) => {
+  const shopLinks =
+    categoryNames.length > 0 ? categoryNames : ['Women', 'Men', 'Industrial', 'New Arrivals'];
+
+  return (
   <footer className="bg-[#0B0B0B] text-white border-t border-zinc-800">
     <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pt-16 pb-10">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-14">
@@ -260,9 +433,9 @@ export const Footer: React.FC = () => (
 
         {(
           [
-            ['Shop', FOOTER_LINKS.shop],
-            ['Company', FOOTER_LINKS.company],
-            ['Support', FOOTER_LINKS.support],
+            ['Shop', shopLinks],
+            ['Company', FOOTER_COMPANY],
+            ['Support', FOOTER_SUPPORT],
           ] as const
         ).map(([heading, links]) => (
           <div key={heading} className="lg:col-span-2 lg:col-start-auto">
@@ -293,4 +466,5 @@ export const Footer: React.FC = () => (
       </div>
     </div>
   </footer>
-);
+  );
+};

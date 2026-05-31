@@ -1,0 +1,69 @@
+import type { ApiError } from '../types/api';
+import { clearStoredToken, getStoredToken } from '../lib/tokenStorage';
+
+const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? '/api').replace(/\/$/, '');
+
+export interface ApiFetchOptions {
+  auth?: boolean;
+}
+
+export function getApiBaseUrl(): string {
+  return API_BASE;
+}
+
+export async function apiFetch<T>(
+  path: string,
+  init?: RequestInit,
+  options?: ApiFetchOptions
+): Promise<T> {
+  const url = `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`;
+
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
+    ...(init?.headers as Record<string, string> | undefined),
+  };
+
+  if (options?.auth) {
+    const token = getStoredToken();
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+  }
+
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      ...init,
+      headers,
+    });
+  } catch {
+    const error: ApiError = {
+      message: 'Unable to reach the server. Check that the API is running.',
+    };
+    throw error;
+  }
+
+  if (!response.ok) {
+    let message = `Request failed (${response.status})`;
+    try {
+      const body = (await response.json()) as { detail?: string | { msg?: string }[] };
+      if (typeof body.detail === 'string') {
+        message = body.detail;
+      } else if (Array.isArray(body.detail) && body.detail[0]?.msg) {
+        message = body.detail[0].msg;
+      }
+    } catch {
+      /* use default message */
+    }
+
+    if (response.status === 401 && options?.auth) {
+      clearStoredToken();
+      message = 'Your session has expired. Please sign in again.';
+    }
+
+    const error: ApiError = { message, status: response.status };
+    throw error;
+  }
+
+  return response.json() as Promise<T>;
+}
