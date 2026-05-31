@@ -183,6 +183,7 @@ class CartItem(Base):
     )
     selected_options = Column(JSON, default=list)
     final_price = Column(Numeric(10, 2), nullable=False, default=0.0)
+    item_total = Column(Numeric(10, 2), nullable=False, default=0.0)
     quantity = Column(Integer, default=1)
     created_at = Column(DateTime, default=func.current_timestamp())
 
