@@ -5,8 +5,9 @@ import ProductDetailSkeleton from '../components/product/ProductDetailSkeleton';
 import ProductGallery from '../components/product/ProductGallery';
 import { ErrorState } from '../components/home/AsyncState';
 import Toast, { type ToastType } from '../components/ui/Toast';
-import { addToCart, getCartErrorMessage } from '../api/cartService';
+import { getCartErrorMessage } from '../api/cartService';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import { useProduct } from '../hooks/useProduct';
 import { useRelatedProducts } from '../hooks/useRelatedProducts';
 import type { ProductVariant } from '../types/api';
@@ -35,6 +36,7 @@ const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { addItem } = useCart();
   const { product, loading, error, refetch } = useProduct(id);
   const { items: relatedItems, loading: relatedLoading } = useRelatedProducts(
     product?.category_id ?? product?.category?.id,
@@ -147,7 +149,7 @@ const ProductDetail: React.FC = () => {
 
     setAdding(true);
     try {
-      await addToCart({
+      await addItem({
         product_id: product.id,
         variant_id: variantId,
         selected_options: selectedOptions.map((o) => ({
