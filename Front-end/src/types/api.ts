@@ -53,3 +53,37 @@ export interface ApiError {
   message: string;
   status?: number;
 }
+
+export interface CartSelectedOption {
+  config_id: string;
+  config_name: string;
+  option_id: string;
+  option_value: string;
+  price_modifier: string | number;
+}
+
+export interface CartVariant {
+  id: string;
+  color: string;
+  stock: number;
+  price_modifier: string | number;
+}
+
+export interface CartItem {
+  id: string;
+  product: Product;
+  variant: CartVariant | null;
+  selected_options: CartSelectedOption[];
+  quantity: number;
+  final_price: string | number;
+  item_total: string | number;
+  created_at: string;
+}
+
+export interface Cart {
+  id?: string | null;
+  user_id: string;
+  grand_total: string | number;
+  items: CartItem[];
+  created_at?: string | null;
+}

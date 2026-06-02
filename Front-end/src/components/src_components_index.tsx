@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination, EffectFade } from 'swiper/modules';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 const NAV_LINKS = ['Shop', 'Collections', 'About', 'Contact'];
 
@@ -100,6 +101,8 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ logo }) => {
   const [scrolled, setScrolled] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -158,6 +161,11 @@ export const Navbar: React.FC<NavbarProps> = ({ logo }) => {
             <span className="material-icons-round text-zinc-300 group-hover:text-[#39FF14] transition-colors">
               shopping_cart
             </span>
+            {isAuthenticated && cartCount > 0 && (
+              <span className="absolute -top-1.5 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-[#39FF14] text-[#0B0B0B] text-[10px] font-black leading-[18px] text-center shadow-[0_0_10px_rgba(57,255,20,0.55)]">
+                {cartCount > 99 ? '99+' : cartCount}
+              </span>
+            )}
           </Link>
           <NavbarAuthControls />
         </div>
