@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import AdminProtectedRoute from './components/auth/AdminProtectedRoute';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -11,6 +12,10 @@ import Cart from './pages/Cart';
 import Orders from './pages/Orders';
 import OrderDetails from './pages/OrderDetails';
 import OrderSuccess from './pages/OrderSuccess';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import AdminProductsPage from './pages/admin/AdminProductsPage';
+import AdminCategoriesPage from './pages/admin/AdminCategoriesPage';
+import AdminOrdersPage from './pages/admin/AdminOrdersPage';
 import PlaceholderPage from './pages/PlaceholderPage';
 
 const App: React.FC = () => (
@@ -28,6 +33,38 @@ const App: React.FC = () => (
               <ProtectedRoute>
                 <Cart />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <AdminProtectedRoute>
+                <AdminDashboardPage />
+              </AdminProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/products"
+            element={
+              <AdminProtectedRoute>
+                <AdminProductsPage />
+              </AdminProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/categories"
+            element={
+              <AdminProtectedRoute>
+                <AdminCategoriesPage />
+              </AdminProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/orders"
+            element={
+              <AdminProtectedRoute>
+                <AdminOrdersPage />
+              </AdminProtectedRoute>
             }
           />
           <Route
