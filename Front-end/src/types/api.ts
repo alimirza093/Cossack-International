@@ -87,3 +87,45 @@ export interface Cart {
   items: CartItem[];
   created_at?: string | null;
 }
+
+export type OrderStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'processing'
+  | 'shipped'
+  | 'delivered'
+  | 'cancelled';
+
+export interface OrderVariant {
+  id: string;
+  color: string;
+  price_modifier: string | number;
+}
+
+export interface OrderSelectedOption {
+  config_id: string;
+  config_name: string;
+  option_id: string;
+  option_value: string;
+  price_modifier: string | number;
+}
+
+export interface OrderItem {
+  id: string;
+  product: Product | null;
+  variant: OrderVariant | null;
+  selected_options: OrderSelectedOption[];
+  quantity: number;
+  final_price: string | number;
+  item_total: string | number;
+  created_at: string;
+}
+
+export interface Order {
+  id: string;
+  user_id: string;
+  total_price: string | number;
+  status: OrderStatus;
+  items: OrderItem[];
+  created_at: string;
+}

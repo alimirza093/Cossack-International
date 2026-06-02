@@ -81,6 +81,13 @@ const NavbarAuthControls: React.FC = () => {
             </p>
             <p className="text-zinc-500 text-[10px] truncate mt-0.5">{user.email}</p>
           </div>
+          <Link
+            to="/orders"
+            onClick={() => setMenuOpen(false)}
+            className="block w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#39FF14] hover:bg-zinc-900/80 transition-colors"
+          >
+            My Orders
+          </Link>
           <button
             type="button"
             onClick={handleLogout}
