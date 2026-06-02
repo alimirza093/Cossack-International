@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-import AdminProtectedRoute from './components/auth/AdminProtectedRoute';
+import AdminRoute from './components/auth/AdminRoute';
+import CustomerRoute from './components/auth/CustomerRoute';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -30,73 +30,73 @@ const App: React.FC = () => (
           <Route
             path="/cart"
             element={
-              <ProtectedRoute>
+              <CustomerRoute>
                 <Cart />
-              </ProtectedRoute>
+              </CustomerRoute>
             }
           />
           <Route
             path="/admin"
             element={
-              <AdminProtectedRoute>
+              <AdminRoute>
                 <AdminDashboardPage />
-              </AdminProtectedRoute>
+              </AdminRoute>
             }
           />
           <Route
             path="/admin/products"
             element={
-              <AdminProtectedRoute>
+              <AdminRoute>
                 <AdminProductsPage />
-              </AdminProtectedRoute>
+              </AdminRoute>
             }
           />
           <Route
             path="/admin/categories"
             element={
-              <AdminProtectedRoute>
+              <AdminRoute>
                 <AdminCategoriesPage />
-              </AdminProtectedRoute>
+              </AdminRoute>
             }
           />
           <Route
             path="/admin/orders"
             element={
-              <AdminProtectedRoute>
+              <AdminRoute>
                 <AdminOrdersPage />
-              </AdminProtectedRoute>
+              </AdminRoute>
             }
           />
           <Route
             path="/orders"
             element={
-              <ProtectedRoute>
+              <CustomerRoute>
                 <Orders />
-              </ProtectedRoute>
+              </CustomerRoute>
             }
           />
           <Route
             path="/orders/:id"
             element={
-              <ProtectedRoute>
+              <CustomerRoute>
                 <OrderDetails />
-              </ProtectedRoute>
+              </CustomerRoute>
             }
           />
           <Route
             path="/order-success"
             element={
-              <ProtectedRoute>
+              <CustomerRoute>
                 <OrderSuccess />
-              </ProtectedRoute>
+              </CustomerRoute>
             }
           />
           <Route
             path="/checkout"
             element={
-              <ProtectedRoute>
+              <CustomerRoute>
                 <PlaceholderPage title="Checkout" description="Secure checkout is on the way. Your session is active." />
-              </ProtectedRoute>
+              </CustomerRoute>
             }
           />
           <Route path="*" element={<Navigate to="/" replace />} />

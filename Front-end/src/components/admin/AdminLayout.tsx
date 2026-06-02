@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Navbar } from '../src_components_index';
+import { useAuth } from '../../context/AuthContext';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -25,13 +26,20 @@ function getActiveKey(pathname: string): AdminNavKey {
 export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const { pathname } = useLocation();
   const activeKey = useMemo(() => getActiveKey(pathname), [pathname]);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen bg-[#F9F9F9] font-sans selection:bg-[#39FF14] selection:text-[#0B0B0B]">
       <Navbar logo="COSSACK" />
       <div className="flex">
-        <aside className="hidden lg:block w-64 bg-[#0B0B0B] border-r border-zinc-800 min-h-[calc(100vh-64px)] pt-4">
-          <nav className="px-3 space-y-1">
+        <aside className="hidden lg:flex lg:flex-col w-64 bg-[#0B0B0B] border-r border-zinc-800 min-h-[calc(100vh-64px)] pt-4">
+          <nav className="px-3 space-y-1 flex-1">
             {NAV.map((item) => {
               const isActive = item.key === activeKey;
               return (
@@ -50,6 +58,16 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               );
             })}
           </nav>
+          <div className="px-3 pb-4">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-3 py-3 rounded-sm border border-zinc-800 text-zinc-300 hover:text-white hover:border-[#39FF14]/50 transition-colors"
+            >
+              <span className="material-icons-round text-base text-[#39FF14]">logout</span>
+              <span className="text-[10px] font-black uppercase tracking-widest">Logout</span>
+            </button>
+          </div>
         </aside>
         <div className="w-full">
           <main className="px-4 sm:px-6 lg:px-8 py-10 md:py-16">{children}</main>

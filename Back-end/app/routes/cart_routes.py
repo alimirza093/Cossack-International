@@ -30,6 +30,9 @@ def get_cart(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db))
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid Token")
 
+    if payload.role == "admin":
+        raise HTTPException(status_code=403, detail="Admin not allow")
+
     user_id = parse_uuid(payload.get("user_id"))
 
     if not user_id:

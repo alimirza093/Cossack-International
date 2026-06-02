@@ -1,5 +1,5 @@
 import type { ApiError } from '../types/api';
-import { clearStoredToken, getStoredToken } from '../lib/tokenStorage';
+import { getStoredToken } from '../lib/tokenStorage';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? '/api').replace(/\/$/, '');
 
@@ -56,8 +56,11 @@ export async function apiFetch<T>(
       /* use default message */
     }
 
+    // IMPORTANT:
+    // Do NOT clear the token on every 401 automatically.
+    // A 401 can be caused by transient backend issues, clock skew, proxy misrouting,
+    // or an endpoint mismatch. Clearing storage immediately can create "login then instantly logout".
     if (response.status === 401 && options?.auth) {
-      clearStoredToken();
       message = 'Your session has expired. Please sign in again.';
     }
 

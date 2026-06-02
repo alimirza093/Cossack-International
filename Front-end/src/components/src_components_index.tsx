@@ -54,6 +54,7 @@ const NavbarAuthControls: React.FC = () => {
   }
 
   const initials = `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase();
+  const isAdmin = user.role === 'admin';
 
   return (
     <div className="relative" ref={menuRef}>
@@ -81,13 +82,39 @@ const NavbarAuthControls: React.FC = () => {
             </p>
             <p className="text-zinc-500 text-[10px] truncate mt-0.5">{user.email}</p>
           </div>
-          <Link
-            to="/orders"
-            onClick={() => setMenuOpen(false)}
-            className="block w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#39FF14] hover:bg-zinc-900/80 transition-colors"
-          >
-            My Orders
-          </Link>
+          {isAdmin ? (
+            <>
+              <Link
+                to="/admin"
+                onClick={() => setMenuOpen(false)}
+                className="block w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#39FF14] hover:bg-zinc-900/80 transition-colors"
+              >
+                Admin Dashboard
+              </Link>
+              <Link
+                to="/admin/products"
+                onClick={() => setMenuOpen(false)}
+                className="block w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#39FF14] hover:bg-zinc-900/80 transition-colors"
+              >
+                Manage Products
+              </Link>
+              <Link
+                to="/admin/orders"
+                onClick={() => setMenuOpen(false)}
+                className="block w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#39FF14] hover:bg-zinc-900/80 transition-colors"
+              >
+                Manage Orders
+              </Link>
+            </>
+          ) : (
+            <Link
+              to="/orders"
+              onClick={() => setMenuOpen(false)}
+              className="block w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#39FF14] hover:bg-zinc-900/80 transition-colors"
+            >
+              My Orders
+            </Link>
+          )}
           <button
             type="button"
             onClick={handleLogout}
@@ -108,8 +135,9 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ logo }) => {
   const [scrolled, setScrolled] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { cartCount } = useCart();
+  const isAdmin = isAuthenticated && user?.role === 'admin';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -160,20 +188,32 @@ export const Navbar: React.FC<NavbarProps> = ({ logo }) => {
           >
             search
           </button>
-          <Link
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-sm border border-zinc-800 text-[10px] font-black uppercase tracking-widest text-zinc-300 hover:text-[#39FF14] hover:border-[#39FF14]/50 transition-colors"
+            >
+              <span className="material-icons-round text-base text-[#39FF14]">dashboard</span>
+              Admin Dashboard
+            </Link>
+          )}
+        {
+            !isAdmin &&
+            <Link
             to="/cart"
             className="relative group"
             aria-label="Cart"
-          >
+            >
             <span className="material-icons-round text-zinc-300 group-hover:text-[#39FF14] transition-colors">
               shopping_cart
             </span>
             {isAuthenticated && cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-[#39FF14] text-[#0B0B0B] text-[10px] font-black leading-[18px] text-center shadow-[0_0_10px_rgba(57,255,20,0.55)]">
+                <span className="absolute -top-1.5 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-[#39FF14] text-[#0B0B0B] text-[10px] font-black leading-[18px] text-center shadow-[0_0_10px_rgba(57,255,20,0.55)]">
                 {cartCount > 99 ? '99+' : cartCount}
               </span>
             )}
           </Link>
+        }
           <NavbarAuthControls />
         </div>
       </div>
