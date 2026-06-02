@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Footer, Navbar } from '../components/src_components_index';
 import Toast, { type ToastType } from '../components/ui/Toast';
 import { useCart } from '../context/CartContext';
 import { getCartErrorMessage } from '../api/cartService';
+import { createOrder, getOrderErrorMessage } from '../api/orderService';
 
 function toNumber(value: string | number | null | undefined): number {
   if (typeof value === 'number') return value;
@@ -27,15 +28,37 @@ const CartRowSkeleton: React.FC = () => (
 );
 
 const Cart: React.FC = () => {
-  const { cart, cartCount, cartTotal, isCartLoading, updateItemQuantity, removeCartItem, clearCart } = useCart();
+  const navigate = useNavigate();
+  const { cart, cartCount, cartTotal, isCartLoading, updateItemQuantity, removeCartItem, clearCart, refreshCart } = useCart();
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
   const [isClearing, setIsClearing] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [confirmClearOpen, setConfirmClearOpen] = useState(false);
+  const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
   const items = cart?.items ?? [];
 
   const subtotal = items.reduce((sum, item) => sum + toNumber(item.item_total), 0);
+  const selectedItems = items.filter((item) => selectedItemIds.includes(item.id));
+  const selectedCount = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
+  const selectedSubtotal = selectedItems.reduce((sum, item) => sum + toNumber(item.item_total), 0);
+
+  const allSelected = items.length > 0 && selectedItemIds.length === items.length;
+
+  const toggleAllItems = () => {
+    if (allSelected) {
+      setSelectedItemIds([]);
+      return;
+    }
+    setSelectedItemIds(items.map((item) => item.id));
+  };
+
+  const toggleItem = (itemId: string) => {
+    setSelectedItemIds((prev) =>
+      prev.includes(itemId) ? prev.filter((id) => id !== itemId) : [...prev, itemId]
+    );
+  };
 
   const handleQuantityChange = async (
     itemId: string,
@@ -65,6 +88,7 @@ const Cart: React.FC = () => {
     } finally {
       setPendingItemId(null);
     }
+    setSelectedItemIds((prev) => prev.filter((id) => id !== itemId));
   };
 
   const handleClearCart = async () => {
@@ -77,6 +101,25 @@ const Cart: React.FC = () => {
       setToast({ message: getCartErrorMessage(err), type: 'error' });
     } finally {
       setIsClearing(false);
+    }
+    setSelectedItemIds([]);
+  };
+
+  const handleCheckout = async () => {
+    if (selectedItemIds.length === 0) {
+      setToast({ message: 'Please select at least one cart item.', type: 'error' });
+      return;
+    }
+    setIsCheckingOut(true);
+    try {
+      const order = await createOrder(selectedItemIds);
+      await refreshCart();
+      setSelectedItemIds([]);
+      navigate('/order-success', { state: { orderId: order.id } });
+    } catch (err) {
+      setToast({ message: getOrderErrorMessage(err), type: 'error' });
+    } finally {
+      setIsCheckingOut(false);
     }
   };
 
@@ -122,6 +165,15 @@ const Cart: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8 lg:gap-10">
               <section className="space-y-4">
+                <label className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-500">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={toggleAllItems}
+                    className="accent-[#0B0B0B]"
+                  />
+                  Select All
+                </label>
                 {items.map((item) => {
                   const maxStock = Math.max(item.variant?.stock ?? 1, 1);
                   const itemPending = pendingItemId === item.id;
@@ -136,6 +188,15 @@ const Cart: React.FC = () => {
                       className="bg-white border border-zinc-100 rounded-sm p-4 sm:p-5"
                     >
                       <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
+                        <label className="pt-1">
+                          <input
+                            type="checkbox"
+                            checked={selectedItemIds.includes(item.id)}
+                            onChange={() => toggleItem(item.id)}
+                            className="accent-[#0B0B0B]"
+                            aria-label={`Select ${item.product.name}`}
+                          />
+                        </label>
                         <img
                           src={image ?? item.product.base_image ?? ''}
                           alt={item.product.name}
@@ -231,9 +292,24 @@ const Cart: React.FC = () => {
                     <span className="font-black text-xl text-[#0B0B0B]">${cartTotal.toFixed(2)}</span>
                   </div>
                 </div>
-                <Link to="/checkout" className="btn-primary w-full inline-flex justify-center mt-6 text-sm">
-                  Proceed To Checkout
-                </Link>
+                <div className="mt-6 p-3 bg-zinc-50 border border-zinc-100 rounded-sm space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-zinc-500">Selected Items</span>
+                    <span className="font-bold text-[#0B0B0B]">{selectedCount}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-zinc-500">Selected Total</span>
+                    <span className="font-black text-[#0B0B0B]">${selectedSubtotal.toFixed(2)}</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCheckout}
+                  disabled={isCheckingOut || selectedItemIds.length === 0}
+                  className="btn-primary w-full inline-flex justify-center mt-6 text-sm disabled:opacity-50 disabled:pointer-events-none"
+                >
+                  {isCheckingOut ? 'Processing...' : 'Proceed To Checkout'}
+                </button>
               </aside>
             </div>
           )}

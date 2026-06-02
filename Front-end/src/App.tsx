@@ -8,6 +8,9 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
+import Orders from './pages/Orders';
+import OrderDetails from './pages/OrderDetails';
+import OrderSuccess from './pages/OrderSuccess';
 import PlaceholderPage from './pages/PlaceholderPage';
 
 const App: React.FC = () => (
@@ -31,7 +34,23 @@ const App: React.FC = () => (
             path="/orders"
             element={
               <ProtectedRoute>
-                <PlaceholderPage title="Your Orders" description="Order history will appear here once the orders feature is available." />
+                <Orders />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders/:id"
+            element={
+              <ProtectedRoute>
+                <OrderDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order-success"
+            element={
+              <ProtectedRoute>
+                <OrderSuccess />
               </ProtectedRoute>
             }
           />
