@@ -52,6 +52,7 @@ const AdminDashboardPage: React.FC = () => {
   const [totalCategories, setTotalCategories] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
   const [pendingOrders, setPendingOrders] = useState(0);
+  const [completedOrders, setCompletedOrders] = useState(0);
 
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [recentProducts, setRecentProducts] = useState<Product[]>([]);
@@ -70,6 +71,7 @@ const AdminDashboardPage: React.FC = () => {
       setTotalCategories(categories.length);
       setTotalOrders(orders.length);
       setPendingOrders(orders.filter((o) => o.status === 'pending').length);
+      setCompletedOrders(orders.filter((o) => o.status === 'delivered').length);
 
       setRecentOrders(
         [...orders].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5)
@@ -92,8 +94,9 @@ const AdminDashboardPage: React.FC = () => {
       { label: 'Total Categories', value: totalCategories },
       { label: 'Total Orders', value: totalOrders },
       { label: 'Pending Orders', value: pendingOrders },
+      { label: 'Completed Orders', value: completedOrders },
     ],
-    [totalProducts, totalCategories, totalOrders, pendingOrders]
+    [totalProducts, totalCategories, totalOrders, pendingOrders, completedOrders]
   );
 
   return (
@@ -121,7 +124,7 @@ const AdminDashboardPage: React.FC = () => {
           <ErrorState message={error} onRetry={load} />
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-10">
               {headlineStats.map((s) => (
                 <div key={s.label} className="bg-white border border-zinc-100 rounded-sm p-5">
                   <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">

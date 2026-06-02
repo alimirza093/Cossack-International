@@ -47,9 +47,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       try {
         await refreshUser();
-      } catch {
-        authService.logout();
-        setUser(null);
+      } catch (err) {
+        // Only clear stored auth when we are confident the token is invalid.
+        // Otherwise keep token (prevents "login then instantly cleared" if backend hiccups).
+        const error = err as ApiError;
+        if (error.status === 401) {
+          authService.logout();
+          setUser(null);
+        }
       } finally {
         setIsLoading(false);
       }

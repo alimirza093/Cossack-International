@@ -40,18 +40,20 @@ function createEmptyCart(): Cart {
 }
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const [cart, setCart] = useState<Cart | null>(null);
   const [isCartLoading, setIsCartLoading] = useState(false);
 
   const refreshCart = useCallback(async () => {
     if (!isAuthenticated) return;
-    setIsCartLoading(true);
-    try {
-      const data = await getCart();
-      setCart(data);
-    } finally {
-      setIsCartLoading(false);
+    if (user?.role != "admin"){
+        setIsCartLoading(true);
+        try {
+            const data = await getCart();
+            setCart(data);
+        } finally {
+            setIsCartLoading(false);
+        }
     }
   }, [isAuthenticated]);
 
