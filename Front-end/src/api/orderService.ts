@@ -7,7 +7,7 @@ export interface CreateOrderPayload {
 
 export function createOrder(cartItemIds: string[]): Promise<Order> {
   return apiFetch<Order>(
-    '/orders',
+    '/order',
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -18,11 +18,11 @@ export function createOrder(cartItemIds: string[]): Promise<Order> {
 }
 
 export function getMyOrders(): Promise<Order[]> {
-  return apiFetch<Order[]>('/orders/my', undefined, { auth: true });
+  return apiFetch<Order[]>('/order/my', undefined, { auth: true });
 }
 
 export function getOrderById(orderId: string): Promise<Order> {
-  return apiFetch<Order>(`/orders/${orderId}`, undefined, { auth: true });
+  return apiFetch<Order>(`/order/${orderId}`, undefined, { auth: true });
 }
 
 export function getOrderErrorMessage(err: unknown): string {

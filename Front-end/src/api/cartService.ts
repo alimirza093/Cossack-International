@@ -63,7 +63,7 @@ export function updateQuantity(
   payload: UpdateQuantityPayload
 ): Promise<UpdateQuantityResponse> {
   return apiFetch<UpdateQuantityResponse>(
-    `/cart/items/${itemId}/quantity`,
+    `/cart/item/${itemId}/quantity`,
     {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -75,7 +75,7 @@ export function updateQuantity(
 
 export function removeItem(itemId: string): Promise<RemoveItemResponse> {
   return apiFetch<RemoveItemResponse>(
-    `/cart/items/${itemId}`,
+    `/cart/${itemId}`,
     { method: 'DELETE' },
     { auth: true }
   );
