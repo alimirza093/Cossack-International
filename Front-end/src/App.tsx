@@ -34,6 +34,7 @@ const App: React.FC = () => (
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/shop" element={<Products />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/collections" element={<Navigate to="/products" replace />} />
