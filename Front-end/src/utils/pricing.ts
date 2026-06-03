@@ -40,9 +40,9 @@ export function calculateUnitPrice(
 }
 
 export function formatModifier(amount: number): string {
-  if (amount === 0) return '';
+  if (amount === 0) return '0';
   const sign = amount > 0 ? '+' : '';
-  return `${sign}$${Math.abs(amount).toFixed(2)}`;
+  return `${sign}${Math.abs(amount).toFixed(2)}`;
 }
 
 export function getStockStatus(stock: number): 'in_stock' | 'low_stock' | 'out_of_stock' {
