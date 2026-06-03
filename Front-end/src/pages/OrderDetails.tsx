@@ -110,7 +110,7 @@ const OrderDetails: React.FC = () => {
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Total Price</p>
                     <p className="text-sm font-black text-[#0B0B0B]">
-                      ${toNumber(order.total_price).toFixed(2)}
+                      Rs. {toNumber(order.total_price).toFixed(2)}
                     </p>
                   </div>
                 </div>
@@ -153,13 +153,13 @@ const OrderDetails: React.FC = () => {
                           Unit Price
                         </p>
                         <p className="font-black text-[#0B0B0B] text-sm mb-3">
-                          ${toNumber(item.final_price).toFixed(2)}
+                          Rs. {toNumber(item.final_price).toFixed(2)}
                         </p>
                         <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">
                           Item Total
                         </p>
                         <p className="font-black text-[#0B0B0B] text-base">
-                          ${toNumber(item.item_total).toFixed(2)}
+                          Rs. {toNumber(item.item_total).toFixed(2)}
                         </p>
                       </div>
                     </div>

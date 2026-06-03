@@ -1,5 +1,5 @@
 /** Public assets served from /public/assets */
-export const SITE_LOGO = '/assets/logo.png';
+export const SITE_LOGO = '/logo.png';
 
 export const HERO_IMAGES = {
   hozri1: '/assets/hozri1.jpeg',

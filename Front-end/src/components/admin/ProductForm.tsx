@@ -210,7 +210,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               <input
                 type="number"
                 value={form.base_price}
-                onChange={(e) => setForm((p) => ({ ...p, base_price: Number(e.target.value) }))}
+                onChange={(e) => setForm((p) => (
+                    { ...p, base_price: Number(e.target.value) }
+                ))}
                 className={inputClass}
               />
             </div>
@@ -239,19 +241,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
-                    Image URL
-                  </label>
-                  <input
-                    value={form.base_image ?? ''}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, base_image: e.target.value.trim() ? e.target.value : null }))
-                    }
-                    className={inputClass}
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
-                    Upload (optional)
+                    Upload
                   </label>
                   <input
                     type="file"

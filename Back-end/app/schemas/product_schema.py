@@ -111,7 +111,7 @@ class ProductOut(BaseModel):
     base_price: Decimal
     base_image: Optional[str] = None
     category_id: Optional[UUID] = None
-    category: CateOut = None
+    category: Optional[CateOut] = None
     created_at: Optional[datetime] = None
     static_configs: list[ProductStaticConfigOut] = Field(default_factory=list)
     configs: list[ProductConfigOut] = Field(default_factory=list)

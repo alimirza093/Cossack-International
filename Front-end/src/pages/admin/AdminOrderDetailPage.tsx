@@ -166,7 +166,7 @@ const AdminOrderDetailPage: React.FC = () => {
                 </div>
               </div>
               <p className="mt-4 text-sm font-black text-[#0B0B0B]">
-                Total: {formatPrice(order.total_price)}
+                Total: Rs. {formatPrice(order.total_price)}
               </p>
             </section>
 
@@ -210,8 +210,8 @@ const AdminOrderDetailPage: React.FC = () => {
                             </div>
                           )}
                           <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
-                            Qty: {item.quantity} · Unit: {formatPrice(item.final_price)} · Line:{' '}
-                            {formatPrice(item.item_total)}
+                            Qty: {item.quantity} · Unit: Rs. {formatPrice(item.final_price)} · Line:{' '}
+                            Rs. {formatPrice(item.item_total)}
                           </p>
                         </div>
                       </div>
@@ -221,7 +221,7 @@ const AdminOrderDetailPage: React.FC = () => {
               )}
               <div className="mt-6 pt-4 border-t border-zinc-100 flex justify-end">
                 <p className="text-lg font-black text-[#0B0B0B]">
-                  Order Total: ${toNumber(order.total_price).toFixed(2)}
+                  Order Total: Rs. {toNumber(order.total_price).toFixed(2)}
                 </p>
               </div>
             </section>

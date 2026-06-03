@@ -6,7 +6,7 @@ interface SiteLogoProps {
   showText?: boolean;
 }
 
-export const SiteLogo: React.FC<SiteLogoProps> = ({ className = 'h-8 w-auto', showText = false }) => (
+export const SiteLogo: React.FC<SiteLogoProps> = ({ className = 'h-11 w-auto', showText = false }) => (
   <span className="inline-flex items-center gap-2 shrink-0">
     <img
       src={SITE_LOGO}

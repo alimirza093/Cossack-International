@@ -3,12 +3,21 @@ from datetime import datetime, timezone
 import cloudinary.uploader
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session , joinedload 
-from sqlalchemy import Boolean
+from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import Boolean, or_
 
 from auth.jwt_handler import verify_token
 from database.db import get_db
-from model.db_models import User, Product, ProductConfig, ProductConfigOption, ProductImage, ProductStaticConfig, ProductVariant
+from model.db_models import (
+    Category,
+    User,
+    Product,
+    ProductConfig,
+    ProductConfigOption,
+    ProductImage,
+    ProductStaticConfig,
+    ProductVariant,
+)
 from utils.uuid_utils import parse_uuid
 from uuid import UUID
 
@@ -60,18 +69,62 @@ def upload_image(file):
 
 
 PRODUCT_LOAD_OPTIONS = (
+    joinedload(Product.category),
     joinedload(Product.static_configs),
     joinedload(Product.configs).joinedload(ProductConfig.options),
     joinedload(Product.variants).joinedload(ProductVariant.images),
 )
 
-def load_product(db: Session, product_id: UUID, is_del: Boolean = False) -> Product | None:
+
+def active_category_filter():
+    """SQLAlchemy filter: category exists and is not soft-deleted."""
+    return or_(Product.category_id.is_(None), Category.is_deleted.is_(False))
+
+
+def public_products_query(db: Session):
+    """Products visible to storefront: not deleted, category not soft-deleted."""
     return (
         db.query(Product)
         .options(*PRODUCT_LOAD_OPTIONS)
-        .filter(Product.id == product_id , Product.is_deleted == is_del)
+        .outerjoin(Category, Product.category_id == Category.id)
+        .filter(Product.is_deleted.is_(False))
+        .filter(active_category_filter())
+    )
+
+
+def get_active_category(db: Session, category_id: UUID) -> Category | None:
+    return (
+        db.query(Category)
+        .filter(Category.id == category_id, Category.is_deleted.is_(False))
         .first()
     )
+
+
+def load_product(
+    db: Session,
+    product_id: UUID,
+    is_del: Boolean = False,
+    *,
+    public_only: bool = False,
+) -> Product | None:
+    query = (
+        db.query(Product)
+        .options(*PRODUCT_LOAD_OPTIONS)
+        .outerjoin(Category, Product.category_id == Category.id)
+        .filter(Product.id == product_id, Product.is_deleted == is_del)
+    )
+    if public_only:
+        query = query.filter(active_category_filter())
+    return query.first()
+
+
+def is_product_available(product: Product) -> bool:
+    if product.is_deleted:
+        return False
+    category = product.category
+    if category is not None and category.is_deleted:
+        return False
+    return True
 
 
 def upsert_static_config(db: Session, product_id: UUID, cfg) -> None:
