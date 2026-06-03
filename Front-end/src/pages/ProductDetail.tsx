@@ -35,7 +35,7 @@ function colorToSwatchStyle(color: string): React.CSSProperties {
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isAuthReady, isLoading: isAuthLoading } = useAuth();
   const { addItem } = useCart();
   const { product, loading, error, refetch } = useProduct(id);
   const { items: relatedItems, loading: relatedLoading } = useRelatedProducts(
@@ -131,8 +131,18 @@ const ProductDetail: React.FC = () => {
   const handleAddToCart = async () => {
     if (!product || !canAddToCart) return;
 
+    if (!isAuthReady || isAuthLoading) {
+      showToast('Checking your session…', 'error');
+      return;
+    }
+
     if (!isAuthenticated) {
       navigate('/login', { state: { from: `/products/${product.id}` } });
+      return;
+    }
+
+    if (user?.role === 'admin') {
+      showToast('Admin accounts cannot add items to the cart. Use a customer account to shop.', 'error');
       return;
     }
 
@@ -399,13 +409,19 @@ const ProductDetail: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  disabled={!canAddToCart || adding}
+                  disabled={!canAddToCart || adding || isAuthLoading}
                   className="w-full bg-[#0B0B0B] text-white py-4 rounded-sm font-black text-[10px] flex items-center justify-center gap-2 uppercase tracking-widest transition-all duration-300 hover:bg-[#39FF14] hover:text-[#0B0B0B] hover:shadow-[0_0_25px_rgba(57,255,20,0.45)] disabled:opacity-50 disabled:hover:bg-[#0B0B0B] disabled:hover:text-white"
                 >
                   <span className="material-icons-round text-base">
-                    {adding ? 'hourglass_empty' : 'add_shopping_cart'}
+                    {adding || isAuthLoading ? 'hourglass_empty' : 'add_shopping_cart'}
                   </span>
-                  {adding ? 'Adding…' : stockStatus === 'out_of_stock' ? 'Out Of Stock' : 'Add to Cart'}
+                  {adding
+                    ? 'Adding…'
+                    : isAuthLoading
+                      ? 'Loading…'
+                      : stockStatus === 'out_of_stock'
+                        ? 'Out Of Stock'
+                        : 'Add to Cart'}
                 </button>
               </div>
             </div>

@@ -44,6 +44,7 @@ export interface Product {
   base_image?: string | null;
   category_id?: string | null;
   category?: Category | null;
+  created_at?: string | null;
   static_configs: ProductStaticConfig[];
   configs: ProductConfig[];
   variants: ProductVariant[];
@@ -88,13 +89,7 @@ export interface Cart {
   created_at?: string | null;
 }
 
-export type OrderStatus =
-  | 'pending'
-  | 'confirmed'
-  | 'processing'
-  | 'shipped'
-  | 'delivered'
-  | 'cancelled';
+export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 
 export interface OrderVariant {
   id: string;

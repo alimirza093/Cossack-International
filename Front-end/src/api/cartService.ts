@@ -43,7 +43,7 @@ export interface ClearCartResponse {
 }
 
 export function getCart(): Promise<Cart> {
-  return apiFetch<Cart>('/cart', undefined, { auth: true });
+  return apiFetch<Cart>('/cart/', undefined, { auth: true });
 }
 
 export function addToCart(payload: AddToCartPayload): Promise<AddToCartResponse> {
@@ -65,7 +65,7 @@ export function updateQuantity(
   return apiFetch<UpdateQuantityResponse>(
     `/cart/item/${itemId}/quantity`,
     {
-      method: 'PUT',
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     },
@@ -92,7 +92,14 @@ export function clearCart(): Promise<ClearCartResponse> {
 export function getCartErrorMessage(err: unknown): string {
   const error = err as ApiError;
   if (error.status === 401) {
-    return 'Please sign in to manage your cart.';
+    return 'Please sign in to add items to your cart.';
+  }
+  if (error.status === 403) {
+    const msg = error.message.toLowerCase();
+    if (msg.includes('admin')) {
+      return 'Admin accounts cannot use the shopping cart. Sign in with a customer account.';
+    }
+    return error.message;
   }
   return error.message ?? 'Could not add to cart. Please try again.';
 }

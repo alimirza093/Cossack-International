@@ -5,6 +5,11 @@ export function getAllOrders(): Promise<Order[]> {
   return apiFetch<Order[]>('/admin/order/', undefined, { auth: true });
 }
 
+export async function getOrderById(orderId: string): Promise<Order | null> {
+  const orders = await getAllOrders();
+  return orders.find((order) => order.id === orderId) ?? null;
+}
+
 export interface UpdateOrderStatusInput {
   status: OrderStatus;
 }

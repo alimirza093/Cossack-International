@@ -1,15 +1,13 @@
+from datetime import datetime, timezone
+
 from fastapi import APIRouter, Depends, HTTPException
-from schemas.auth_schema import UserCreate, UserLogin, UserOut, Token, TokenData
-from fastapi.security import OAuth2PasswordBearer
+from schemas.auth_schema import UserCreate, UserLogin, UserOut
 from sqlalchemy.orm import Session
 from database.db import get_db
 from model.db_models import User
 from auth.password import hash_password, verify_password
-from auth.jwt_handler import (
-    create_access_token as create_token,
-    verify_token,
-    verify_token,
-)
+from auth.jwt_handler import create_access_token as create_token
+from utils.helping_funcs import get_current_user
 
 router = APIRouter()
 
@@ -34,6 +32,7 @@ def register(data: UserCreate, db: Session = Depends(get_db)):
         email=data.email,
         password_hash=hash_password(data.password),
         role="user",
+        created_at=datetime.now(timezone.utc),
     )
     db.add(user)
     db.commit()
@@ -56,28 +55,6 @@ def login(data: UserLogin, db: Session = Depends(get_db)):
     }
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-
-
 @router.get("/me", response_model=UserOut)
-def get_current_user(
-    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
-):
-
-    payload = verify_token(token)
-
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-    from utils.uuid_utils import parse_uuid
-
-    user_id = parse_uuid(payload.get("user_id"))
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-    user = db.query(User).filter(User.id == user_id).first()
-
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    return user
+def get_me(current_user: User = Depends(get_current_user)):
+    return current_user

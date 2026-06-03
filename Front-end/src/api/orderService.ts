@@ -7,7 +7,7 @@ export interface CreateOrderPayload {
 
 export function createOrder(cartItemIds: string[]): Promise<Order> {
   return apiFetch<Order>(
-    '/order',
+    '/order/',
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -28,7 +28,16 @@ export function getOrderById(orderId: string): Promise<Order> {
 export function getOrderErrorMessage(err: unknown): string {
   const error = err as ApiError;
   if (error.status === 401) {
-    return 'Please sign in to access your orders.';
+    return error.message && !error.message.startsWith('Request failed')
+      ? error.message
+      : 'Please sign in to access your orders.';
+  }
+  if (error.status === 403) {
+    const msg = error.message.toLowerCase();
+    if (msg.includes('admin')) {
+      return 'Admin accounts cannot use customer orders. Sign in with a customer account.';
+    }
+    return error.message;
   }
   return error.message ?? 'Order request failed. Please try again.';
 }

@@ -5,7 +5,12 @@ import { Autoplay, Navigation, Pagination, EffectFade } from 'swiper/modules';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 
-const NAV_LINKS = ['Shop', 'Collections', 'About', 'Contact'];
+const NAV_LINKS: Array<{ label: string; to: string }> = [
+  { label: 'Shop', to: '/products' },
+  { label: 'Collections', to: '/collections' },
+  { label: 'About', to: '/about' },
+  { label: 'Contact', to: '/contact' },
+];
 
 const NavbarAuthControls: React.FC = () => {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
@@ -82,6 +87,15 @@ const NavbarAuthControls: React.FC = () => {
             </p>
             <p className="text-zinc-500 text-[10px] truncate mt-0.5">{user.email}</p>
           </div>
+          {/* Profile is always available for signed-in users */}
+          <Link
+            to="/profile"
+            onClick={() => setMenuOpen(false)}
+            className="block w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#39FF14] hover:bg-zinc-900/80 transition-colors"
+          >
+            Profile
+          </Link>
+
           {isAdmin ? (
             <>
               <Link
@@ -105,15 +119,24 @@ const NavbarAuthControls: React.FC = () => {
               >
                 Manage Orders
               </Link>
+              <Link
+                to="/admin/categories"
+                onClick={() => setMenuOpen(false)}
+                className="block w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#39FF14] hover:bg-zinc-900/80 transition-colors"
+              >
+                Manage Categories
+              </Link>
             </>
           ) : (
-            <Link
-              to="/orders"
-              onClick={() => setMenuOpen(false)}
-              className="block w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#39FF14] hover:bg-zinc-900/80 transition-colors"
-            >
-              My Orders
-            </Link>
+            <>
+              <Link
+                to="/orders"
+                onClick={() => setMenuOpen(false)}
+                className="block w-full text-left px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#39FF14] hover:bg-zinc-900/80 transition-colors"
+              >
+                My Orders
+              </Link>
+            </>
           )}
           <button
             type="button"
@@ -169,13 +192,13 @@ export const Navbar: React.FC<NavbarProps> = ({ logo }) => {
           </Link>
           <ul className="hidden lg:flex items-center gap-8">
             {NAV_LINKS.map((link) => (
-              <li key={link}>
-                <a
-                  href="#"
+              <li key={link.label}>
+                <Link
+                  to={link.to}
                   className="nav-link-glow text-zinc-300 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors"
                 >
-                  {link}
-                </a>
+                  {link.label}
+                </Link>
               </li>
             ))}
           </ul>

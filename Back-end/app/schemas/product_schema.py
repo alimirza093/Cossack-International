@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 from typing import Any, Optional,List
 from uuid import UUID
@@ -111,6 +112,7 @@ class ProductOut(BaseModel):
     base_image: Optional[str] = None
     category_id: Optional[UUID] = None
     category: CateOut = None
+    created_at: Optional[datetime] = None
     static_configs: list[ProductStaticConfigOut] = Field(default_factory=list)
     configs: list[ProductConfigOut] = Field(default_factory=list)
     variants: list[ProductVariantOut] = Field(default_factory=list)

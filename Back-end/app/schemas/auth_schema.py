@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr
+from datetime import datetime
 
 
 class UserCreate(BaseModel):
@@ -21,6 +22,7 @@ class UserOut(BaseModel):
     last_name: str
     email: EmailStr
     role: str
+    created_at: datetime
 
     class Config:
         from_attributes = True
