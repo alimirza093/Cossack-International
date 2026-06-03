@@ -8,7 +8,7 @@ const OrderSuccess: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F9F9F9] font-sans selection:bg-[#39FF14] selection:text-[#0B0B0B]">
-      <Navbar logo="COSSACK" />
+      <Navbar />
       <main className="px-4 sm:px-6 lg:px-8 py-16">
         <div className="max-w-3xl mx-auto bg-white border border-zinc-100 rounded-sm py-16 px-6 text-center">
           <div className="w-20 h-20 mx-auto rounded-full bg-[#39FF14]/15 border border-[#39FF14]/30 flex items-center justify-center mb-5">

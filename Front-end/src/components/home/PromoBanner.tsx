@@ -1,10 +1,11 @@
 import React from 'react';
-import heroBanner from '../../assets/hero.png';
+import { Link } from 'react-router-dom';
+import { HERO_IMAGES } from '../../lib/siteAssets';
 
 const PromoBanner: React.FC = () => (
   <section className="relative py-28 md:py-36 px-6 overflow-hidden bg-[#0B0B0B]">
     <img
-      src={heroBanner}
+      src={HERO_IMAGES.puffer3}
       alt=""
       className="absolute inset-0 w-full h-full object-cover opacity-25 grayscale"
       loading="lazy"
@@ -20,11 +21,11 @@ const PromoBanner: React.FC = () => (
       </h2>
       <p className="text-zinc-500 text-sm mb-10 max-w-md mx-auto leading-relaxed">
         Crafted in high-fidelity environments with industrial-grade standards. Explore the full
-        collection today.
+        catalog today.
       </p>
-      <button type="button" className="btn-primary">
-        Shop Collection
-      </button>
+      <Link to="/products" className="btn-primary inline-block">
+        Shop Now
+      </Link>
     </div>
   </section>
 );

@@ -10,7 +10,7 @@ interface AuthLayoutProps {
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle }) => (
   <div className="min-h-screen bg-[#F9F9F9] font-sans selection:bg-[#39FF14] selection:text-[#0B0B0B] flex flex-col">
-    <Navbar logo="COSSACK" />
+    <Navbar />
     <main className="flex-1 px-4 sm:px-6 lg:px-8 py-12 md:py-16">
       <div className="max-w-md mx-auto w-full">
         <div className="mb-8 text-center">

@@ -10,7 +10,6 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ProductDetail from './pages/ProductDetail';
 import Products from './pages/Products';
-import Collections from './pages/Collections';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Cart from './pages/Cart';
@@ -37,7 +36,7 @@ const App: React.FC = () => (
           <Route path="/products" element={<Products />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/products/:id" element={<ProductDetail />} />
-          <Route path="/collections" element={<Collections />} />
+          <Route path="/collections" element={<Navigate to="/products" replace />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />

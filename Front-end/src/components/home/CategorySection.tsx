@@ -20,7 +20,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({ items, loading }) => 
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {items.map((cat) => (
-            <CategoryCard key={cat.id} title={cat.title} image={cat.image} />
+            <CategoryCard key={cat.id} id={cat.id} title={cat.title} image={cat.image} />
           ))}
         </div>
       )}

@@ -37,7 +37,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-[#F9F9F9] font-sans selection:bg-[#39FF14] selection:text-[#0B0B0B]">
-      <Navbar logo="COSSACK" />
+      <Navbar />
       <div className="flex">
         <aside className="hidden lg:flex lg:flex-col w-64 bg-[#0B0B0B] border-r border-zinc-800 min-h-[calc(100vh-64px)] pt-4">
           <nav className="px-3 space-y-1 flex-1">

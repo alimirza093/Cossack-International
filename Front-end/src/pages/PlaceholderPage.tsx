@@ -9,7 +9,7 @@ interface PlaceholderPageProps {
 
 const PlaceholderPage: React.FC<PlaceholderPageProps> = ({ title, description }) => (
   <div className="min-h-screen bg-[#F9F9F9] font-sans selection:bg-[#39FF14] selection:text-[#0B0B0B]">
-    <Navbar logo="COSSACK" />
+    <Navbar />
     <main className="px-4 sm:px-6 lg:px-8 py-24">
       <div className="max-w-xl mx-auto text-center">
         <div className="flex items-center justify-center gap-3 mb-6">
