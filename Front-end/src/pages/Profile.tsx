@@ -229,17 +229,6 @@ const ProfileInner: React.FC = () => {
                   </div>
                 )}
 
-                {!editing && (
-                  <div className="mt-6 p-4 bg-zinc-50 border border-zinc-100 rounded-sm">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">
-                      Change Password
-                    </p>
-                    <p className="text-sm text-zinc-500">
-                      Password change is not available yet (no backend route found).
-                    </p>
-                  </div>
-                )}
-
                 <div className="sr-only">{canEditEmail ? 'email editable' : 'email read-only'}</div>
               </section>
 
@@ -257,10 +246,6 @@ const ProfileInner: React.FC = () => {
                   <div className="flex items-start justify-between gap-3">
                     <dt className="text-zinc-500">Account Created</dt>
                     <dd className="font-bold text-[#0B0B0B] text-right">{createdAt}</dd>
-                  </div>
-                  <div className="flex items-start justify-between gap-3">
-                    <dt className="text-zinc-500">User ID</dt>
-                    <dd className="text-zinc-600 text-right break-all text-xs">{profile.id}</dd>
                   </div>
                 </dl>
               </aside>

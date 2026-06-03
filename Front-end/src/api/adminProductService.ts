@@ -41,7 +41,7 @@ export interface AdminVariantInput {
 export interface AdminProductFormInput {
   name: string;
   description: string;
-  base_price: string | number;
+  base_price: number | string;
   category_id: string;
   base_image: string | null;
   base_image_file?: File | null;

@@ -11,10 +11,11 @@ from model.db_models import (
     CartItem,
     Order,
     OrderItem,
+    Product,
     User,
 )
 from schemas.order_schema import CreateOrderRequest, OrderOut
-from utils.helping_funcs import get_current_user
+from utils.helping_funcs import get_current_user, is_product_available
 
 router = APIRouter()
 
@@ -58,7 +59,7 @@ def create_order(
     selected_items = (
         db.query(CartItem)
         .options(
-            joinedload(CartItem.product),
+            joinedload(CartItem.product).joinedload(Product.category),
             joinedload(CartItem.variant),
         )
         .filter(
@@ -83,7 +84,7 @@ def create_order(
                 detail="Product no longer exists",
             )
 
-        if item.product.is_deleted:
+        if not is_product_available(item.product):
             raise HTTPException(
                 status_code=400,
                 detail=f"Product '{item.product.name}' is unavailable",

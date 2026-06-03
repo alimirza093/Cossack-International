@@ -16,7 +16,7 @@ from model.db_models import (
     User,
 )
 from schemas.cart_schema import CartItemCreate, CartOut, UpdateQuantity
-from utils.helping_funcs import get_current_user
+from utils.helping_funcs import get_current_user, is_product_available, load_product
 
 router = APIRouter()
 
@@ -62,9 +62,9 @@ def add_to_cart(
     _reject_admin_cart(current_user)
     user_id = current_user.id
 
-    product = db.query(Product).filter(Product.id == data.product_id).first()
+    product = load_product(db, data.product_id, is_del=False, public_only=True)
 
-    if not product:
+    if not product or not is_product_available(product):
         raise HTTPException(status_code=403, detail="Not such product stored")
 
     variant = (

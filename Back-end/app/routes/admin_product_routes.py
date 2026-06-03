@@ -17,6 +17,7 @@ from schemas.product_schema import ProductFullCreate, ProductOut, ProductUpdate
 from utils.helping_funcs import (
     PRODUCT_LOAD_OPTIONS,
     admin_required,
+    get_active_category,
     load_product,
     replace_variant_images,
     upload_image,
@@ -69,6 +70,9 @@ async def create_product_full(
     payload, base_image_file, variant_files = await _parse_product_payload(request)
     base_image_url = _resolve_image_url(payload.base_image, base_image_file)
     variant_file_iter = iter(variant_files)
+
+    if not get_active_category(db, payload.category_id):
+        raise HTTPException(status_code=400, detail="Category not found or inactive")
 
     try:
         product = Product(
@@ -197,6 +201,8 @@ async def update_product(
         if base_image_file is not None or payload.base_image is not None:
             product.base_image = _resolve_image_url(payload.base_image, base_image_file)
         if payload.category_id is not None:
+            if not get_active_category(db, payload.category_id):
+                raise HTTPException(status_code=400, detail="Category not found or inactive")
             product.category_id = payload.category_id
 
         if payload.static_configs:

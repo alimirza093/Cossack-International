@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation, Pagination, EffectFade } from 'swiper/modules';
+import { Autoplay, Pagination, EffectFade } from 'swiper/modules';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { SiteLogo } from './ui/SiteLogo';
+import { MediaFrame } from './ui/MediaFrame';
 
 const NAV_LINKS: Array<{ label: string; to: string }> = [
   { label: 'Shop', to: '/products' },
@@ -180,19 +181,10 @@ export const Navbar: React.FC = () => {
         scrolled ? 'shadow-[0_8px_30px_rgba(0,0,0,0.45)]' : 'shadow-none'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
-        <div className="flex items-center gap-4 lg:gap-10">
-          <button
-            type="button"
-            onClick={() => setMobileNavOpen((open) => !open)}
-            className="inline-flex lg:hidden material-icons-round text-zinc-400 hover:text-[#39FF14] transition-colors"
-            aria-label={mobileNavOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={mobileNavOpen}
-          >
-            {mobileNavOpen ? 'close' : 'menu'}
-          </button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 lg:h-[4.5rem] flex items-center justify-between gap-4">
+        <div className="flex items-center gap-6 lg:gap-10 min-w-0 flex-1">
           <Link to="/" className="shrink-0" onClick={() => setMobileNavOpen(false)}>
-            <SiteLogo className="h-8 sm:h-9 w-auto" />
+            <SiteLogo className="h-11 sm:h-12 lg:h-14 w-auto max-w-[min(220px,42vw)]" />
           </Link>
           <ul className="hidden lg:flex items-center gap-8">
             {NAV_LINKS.map((link) => (
@@ -207,7 +199,7 @@ export const Navbar: React.FC = () => {
             ))}
           </ul>
         </div>
-        <div className="flex items-center gap-3 sm:gap-4 text-white">
+        <div className="flex items-center gap-2 sm:gap-4 text-white shrink-0">
           {isAdmin && (
             <Link
               to="/admin"
@@ -230,6 +222,15 @@ export const Navbar: React.FC = () => {
             </Link>
           )}
           <NavbarAuthControls />
+          <button
+            type="button"
+            onClick={() => setMobileNavOpen((open) => !open)}
+            className="flex lg:hidden items-center justify-center w-10 h-10 -mr-1 material-icons-round text-zinc-400 hover:text-[#39FF14] transition-colors"
+            aria-label={mobileNavOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileNavOpen}
+          >
+            {mobileNavOpen ? 'close' : 'menu'}
+          </button>
         </div>
       </div>
 
@@ -287,28 +288,26 @@ interface HeroSliderProps {
 export const HeroSlider: React.FC<HeroSliderProps> = ({ slides }) => (
   <section className="relative w-full hero-swiper">
     <Swiper
-      modules={[Autoplay, Navigation, Pagination, EffectFade]}
+      modules={[Autoplay, Pagination, EffectFade]}
       effect="fade"
       fadeEffect={{ crossFade: true }}
       autoplay={{ delay: 4500, disableOnInteraction: false }}
       loop
       speed={800}
-      navigation
       pagination={{ clickable: true }}
       className="h-[75vh] min-h-[520px] max-h-[800px] w-full"
     >
       {slides.map((slide, index) => (
         <SwiperSlide key={index}>
-          <div className="relative h-full w-full overflow-hidden bg-[#0B0B0B]">
-            <img
+          <div className="relative h-full w-full">
+            <MediaFrame
               src={slide.image}
               alt={slide.title}
               loading={index === 0 ? 'eager' : 'lazy'}
-              decoding="async"
-              className="absolute inset-0 w-full h-full object-cover scale-105"
+              className="absolute inset-0"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0B]/90 via-[#0B0B0B]/55 to-[#0B0B0B]/30" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-[#0B0B0B]/40" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0B]/85 via-[#0B0B0B]/45 to-transparent pointer-events-none z-[2]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B]/80 via-transparent to-[#0B0B0B]/25 pointer-events-none z-[2]" />
 
             <div className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex flex-col justify-center">
               <p className="text-[#39FF14] text-[10px] sm:text-xs font-black uppercase tracking-[0.35em] mb-4">
@@ -449,7 +448,7 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({
           <h3 className="text-sm font-bold text-[#0B0B0B] leading-snug mb-1 line-clamp-2 min-h-[2.5rem]">
             {name}
           </h3>
-          <p className="text-[#0B0B0B] font-black text-lg mb-2">${price.toFixed(2)}</p>
+          <p className="text-[#0B0B0B] font-black text-lg mb-2">Rs. {price.toFixed(2)}</p>
 
           {(visibleColors.length > 0 || configOptionsCount > 0) && (
             <div className="flex flex-wrap items-center gap-2 min-h-[1.25rem]">
@@ -530,7 +529,7 @@ export const Footer: React.FC<FooterProps> = ({ categories = [] }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-14">
         <div className="lg:col-span-4 space-y-5">
           <Link to="/">
-            <SiteLogo className="h-10 w-auto" />
+            <SiteLogo className="h-12 w-auto" />
           </Link>
           <p className="text-zinc-500 text-sm leading-relaxed max-w-sm">
             Technical precision meets textile heritage. Redefining high-fidelity manufacturing for

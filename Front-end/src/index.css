@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "swiper/css";
-@import "swiper/css/navigation";
 @import "swiper/css/pagination";
 @import "swiper/css/effect-fade";
 
@@ -29,27 +28,7 @@ body {
 
 .hero-swiper .swiper-button-prev,
 .hero-swiper .swiper-button-next {
-  color: #fff;
-  width: 2.75rem;
-  height: 2.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 0.125rem;
-  background: rgba(11, 11, 11, 0.5);
-  backdrop-filter: blur(8px);
-  transition: all 0.3s ease;
-}
-
-.hero-swiper .swiper-button-prev:hover,
-.hero-swiper .swiper-button-next:hover {
-  border-color: #39ff14;
-  color: #39ff14;
-  box-shadow: 0 0 20px rgba(57, 255, 20, 0.35);
-}
-
-.hero-swiper .swiper-button-prev::after,
-.hero-swiper .swiper-button-next::after {
-  font-size: 0.875rem;
-  font-weight: 900;
+  display: none !important;
 }
 
 /* Utilities */
