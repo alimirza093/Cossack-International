@@ -1,160 +1,150 @@
-👨‍💻 DEV 1 — USER SIDE (Frontend Flow)
-👉 focus: customer journey
+# 🚀 Cossack International
 
-🔐 Auth
-POST /auth/register → user create
+Fullstack e-commerce application with a React + Vite frontend and a FastAPI backend.
 
-POST /auth/login → JWT login
+## ✨ Project overview
 
-GET /auth/me → current user
+- 🛍️ Frontend: `Front-end/` — React, TypeScript, Vite, Tailwind CSS.
+- ⚙️ Backend: `Back-end/app/` — FastAPI, SQLAlchemy, PostgreSQL, Alembic migrations, Cloudinary uploads.
+- 🔐 Authentication: JWT-based user login/register flows.
+- 🛒 Shopping flow: product catalog, configurable variants, cart, checkout, order history.
+- 🧑‍💼 Admin panel: product management, order management, category CRUD.
 
-🛍️ Products (UPDATED STRUCTURE)
-GET /products
-👉 list all products with:
+## 🎨 UI & animation
 
-variants (color + stock)
+- Tailwind-driven UI with hover transitions, skeleton loaders, and spinner animations.
+- `animate-pulse`, `animate-spin`, and `transition-*` utility classes are used across pages.
+- Swiper carousel support is available for image galleries and sliders.
+- Responsive admin and customer pages with polished micro-interactions.
 
-configs (fabric etc)
+## Repository structure
 
-GET /products/{id}
-👉 single product detail
-👉 frontend yahan se:
+- `Front-end/`
+  - React app entrypoint: `src/main.tsx`
+  - UI pages: `src/pages/`
+  - API layer: `src/api/`
+  - Context: `src/context/`
+- `Back-end/app/`
+  - `main.py` — FastAPI app with CORS and route registration
+  - `routes/` — auth, user, category, product, admin product, cart, order, admin order
+  - `database/db.py` — SQLAlchemy engine and session management
+  - `migrations/` — Alembic migration scripts
+  - `utils/cloudinary_config.py` — Cloudinary setup
 
-colors dropdown
+## Backend setup
 
-configs dropdown
+1. Open a terminal and navigate to the backend folder:
 
-size matrix UI build karega
+```bash
+cd Back-end/app
+```
 
-🛒 Cart (UPDATED 🔥)
-POST /cart/add
-👉 full structure save karega:
+2. Create and activate a virtual environment:
 
-variant_id (color)
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
 
-selected_configurations
+3. Install dependencies:
 
-size_breakdown
+```bash
+pip install -r requirements.txt
+```
 
-GET /cart
-👉 full nested cart (configs + sizes + roster)
+4. Add a `.env` file in `Back-end/app/` with the required environment variables:
 
-DELETE /cart/{id}
-👉 remove item
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/cossack_db
+SECRET_KEY=some-strong-secret
+CLOUD_NAME=your_cloudinary_cloud_name
+API_KEY=your_cloudinary_api_key
+CLOUDINARY_SECRET_KEY=your_cloudinary_secret_key
+```
 
-📦 Orders
-POST /orders
-👉 cart → order (snapshot copy)
+5. Run the backend:
 
-GET /orders/my
-👉 user orders
+```bash
+uvicorn main:app --reload
+```
 
-GET /orders/{id}
-👉 single order
+The API will start on `http://127.0.0.1:8000`.
 
-👨‍💻 DEV 2 — ADMIN SIDE (CONTROL PANEL 🔥)
-👉 focus: data + system control
+## Frontend setup
 
-🛍️ Products (CORE 🔥)
-POST /admin/products/full
-👉 create:
+1. Open a terminal and navigate to the frontend folder:
 
-product
+```bash
+cd Front-end
+```
 
-variants
+2. Install dependencies:
 
-configs
+```bash
+npm install
+```
 
-GET /admin/products
-👉 full nested listing:
+3. Start the development server:
 
-product
+```bash
+npm run dev
+```
 
-variants
+The frontend will run on `http://localhost:5173` by default.
 
-configs
+## Supported API routes
 
-GET /admin/products/{id}
-👉 edit page ke liye full data
+### Auth
+- `POST /auth/register` — register a new user
+- `POST /auth/login` — login and receive JWT
+- `GET /auth/me` — get current authenticated user
 
-PUT /admin/products/{id}
-👉 update:
+### User profile
+- `GET /users/profile` — fetch current user profile
+- `PUT /users/profile` — update profile
 
-basic info
+### Categories
+- `GET /categories/` — list categories
+- `GET /categories/categories/{category_id}` — get category details
+- `POST /categories/post-category` — create category
+- `PUT /categories/update-category/{category_id}` — update category
+- `DELETE /categories/delete-category/{category_id}` — delete category
 
-variants (replace/update)
+### Products
+- `GET /user/products/` — list products for users
+- `GET /user/products/{product_id}` — get product details
 
-configs
+### Cart
+- `GET /cart/` — get current cart
+- `POST /cart/add` — add item to cart
+- `DELETE /cart/{cart_item_id}` — remove cart item
+- `DELETE /cart/clear` — clear cart
+- `PATCH /cart/item/{cart_item_id}/quantity` — update cart item quantity
 
-DELETE /admin/products/{id}
-👉 delete product + cascade
+### Orders
+- `POST /order/` — create an order from cart
+- `GET /order/my` — list current user orders
+- `GET /order/{order_id}` — get order details
 
-🎨 Variants (optional separate control)
-PUT /admin/variants/{id}
-👉 stock update
+### Admin
+- `POST /admin/products/full` — create product with variants and configs
+- `GET /admin/products/` — list admin products
+- `GET /admin/products/{product_id}` — get product data for edit
+- `PUT /admin/products/{product_id}` — update product
+- `DELETE /admin/products/{product_id}` — delete product
+- `POST /admin/products/{product_id}/restore` — restore deleted product
+- `GET /admin/order/` — list all orders
+- `PUT /admin/order/{order_id}` — update order status
 
-⚙️ Configs
-POST /admin/products/{id}/configs
-👉 add new config
+## Notes
 
-DELETE /admin/configs/{id}
-👉 remove config
+- Backend CORS allows local frontend development on `http://localhost:5173` and `http://127.0.0.1:5173`.
+- The backend uses `.env` values in `database/db.py`, `auth/jwt_handler.py`, and `utils/cloudinary_config.py`.
+- Product configuration and cart payloads support variant selection, custom config options, and size breakdown data.
 
-📦 Orders (Admin)
-GET /admin/orders
-👉 all orders
+## Development tips
 
-PUT /admin/orders/{id}
-👉 update status
+- Run the backend from `Back-end/app`.
+- Run the frontend from `Front-end`.
+- Use the FastAPI docs at `http://127.0.0.1:8000/docs` after starting the backend.
 
-📊 Stats
-GET /admin/stats
-👉 dashboard
-
-🧠 SCHEMA UPDATE GUIDE (IMPORTANT 🔥)
-🛒 CartItem (UPDATE REQUIRED)
-variant_id = Column(Integer, ForeignKey("product_variants.id"))
-
-selected_configurations = Column(JSON)
-
-size_breakdown = Column(JSON)
-📦 OrderItem (SAME COPY)
-variant_id = Column(Integer)
-
-selected_configurations = Column(JSON)
-
-size_breakdown = Column(JSON)
-🧠 Logic Rule
-👉 Cart → flexible
-👉 Order → snapshot (copy exact same data)
-
-🔥 ADD TO CART FLOW (FINAL)
-1. product fetch
-2. user selects:
-   - color → variant_id
-   - configs
-   - sizes
-3. backend:
-   - validate config options
-   - check variant stock
-   - save JSON
-⚡ TEAM DIVISION (CLEAR)
-✅ Dev 1
-Auth
-
-Product GET APIs
-
-Cart
-
-Orders (user side)
-
-✅ Dev 2
-Product create/update (full endpoint 🔥)
-
-Variants
-
-Configs
-
-Admin orders
-
-Stats
