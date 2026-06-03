@@ -12,6 +12,10 @@ body {
 }
 
 /* Hero Swiper */
+.hero-swiper .swiper-slide {
+  height: 100%;
+}
+
 .hero-swiper .swiper-pagination-bullet {
   width: 2rem;
   height: 0.25rem;

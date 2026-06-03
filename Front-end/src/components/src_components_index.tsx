@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, EffectFade } from 'swiper/modules';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { SiteLogo } from './ui/SiteLogo';
 import { MediaFrame } from './ui/MediaFrame';
+import { ProductSearchInput } from './ui/ProductSearchInput';
+import { shopUrl, SHOP_PATH } from '../lib/shopParams';
 
 const NAV_LINKS: Array<{ label: string; to: string }> = [
   { label: 'Shop', to: '/products' },
@@ -152,6 +154,40 @@ const NavbarAuthControls: React.FC = () => {
   );
 };
 
+const NavbarSearch: React.FC<{
+  className?: string;
+  size?: 'sm' | 'md';
+  onNavigate?: () => void;
+}> = ({ className = '', size = 'md', onNavigate }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [term, setTerm] = useState('');
+
+  useEffect(() => {
+    const onShop =
+      location.pathname === SHOP_PATH || location.pathname === '/shop';
+    if (onShop) {
+      const q = new URLSearchParams(location.search).get('search') ?? '';
+      setTerm(q);
+    }
+  }, [location.pathname, location.search]);
+
+  const goToShop = (query: string) => {
+    navigate(shopUrl({ search: query }));
+    onNavigate?.();
+  };
+
+  return (
+    <ProductSearchInput
+      value={term}
+      onChange={setTerm}
+      onSubmit={() => goToShop(term)}
+      size={size}
+      className={className}
+    />
+  );
+};
+
 // --- Navbar ---
 export const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -198,6 +234,9 @@ export const Navbar: React.FC = () => {
               </li>
             ))}
           </ul>
+          <div className="hidden lg:flex flex-1 max-w-md min-w-[12rem]">
+            <NavbarSearch className="w-full" />
+          </div>
         </div>
         <div className="flex items-center gap-2 sm:gap-4 text-white shrink-0">
           {isAdmin && (
@@ -243,7 +282,14 @@ export const Navbar: React.FC = () => {
             onClick={() => setMobileNavOpen(false)}
           />
           <div className="absolute left-0 right-0 top-full z-50 bg-[#0B0B0B] border-b border-zinc-800 lg:hidden">
-            <ul className="px-4 py-4 space-y-1">
+            <div className="px-4 pt-4 pb-2">
+              <NavbarSearch
+                size="sm"
+                className="w-full"
+                onNavigate={() => setMobileNavOpen(false)}
+              />
+            </div>
+            <ul className="px-4 pb-4 space-y-1">
               {NAV_LINKS.map((link) => (
                 <li key={link.label}>
                   <Link
@@ -298,18 +344,20 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ slides }) => (
       className="h-[75vh] min-h-[520px] max-h-[800px] w-full"
     >
       {slides.map((slide, index) => (
-        <SwiperSlide key={index}>
-          <div className="relative h-full w-full">
-            <MediaFrame
-              src={slide.image}
-              alt={slide.title}
-              loading={index === 0 ? 'eager' : 'lazy'}
-              className="absolute inset-0"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0B]/85 via-[#0B0B0B]/45 to-transparent pointer-events-none z-[2]" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B]/80 via-transparent to-[#0B0B0B]/25 pointer-events-none z-[2]" />
+        <SwiperSlide key={index} className="!h-auto min-h-full">
+          <div className="relative h-full w-full min-h-[520px]">
+            <div className="absolute inset-0 z-0 pointer-events-none">
+              <MediaFrame
+                src={slide.image}
+                alt={slide.title}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                className="h-full w-full"
+              />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0B]/85 via-[#0B0B0B]/45 to-transparent pointer-events-none z-[1]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B]/80 via-transparent to-[#0B0B0B]/25 pointer-events-none z-[1]" />
 
-            <div className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex flex-col justify-center">
+            <div className="relative z-20 h-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex flex-col justify-center pointer-events-auto">
               <p className="text-[#39FF14] text-[10px] sm:text-xs font-black uppercase tracking-[0.35em] mb-4">
                 Cossack International
               </p>
