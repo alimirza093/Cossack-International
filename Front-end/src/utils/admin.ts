@@ -3,7 +3,7 @@ export function toNumber(value: string | number): number {
 }
 
 export function formatPrice(value: string | number): string {
-  return `$${toNumber(value).toFixed(2)}`;
+  return `${toNumber(value).toFixed(2)}`;
 }
 
 export function formatAdminDate(value: string | undefined | null): string {
