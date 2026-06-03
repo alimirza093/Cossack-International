@@ -24,7 +24,7 @@ const Contact: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F9F9F9] font-sans selection:bg-[#39FF14] selection:text-[#0B0B0B]">
-      <Navbar logo="COSSACK" />
+      <Navbar />
       <main className="px-4 sm:px-6 lg:px-8 py-10 md:py-16">
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center gap-3 mb-6">

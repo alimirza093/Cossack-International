@@ -4,10 +4,10 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination, EffectFade } from 'swiper/modules';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { SiteLogo } from './ui/SiteLogo';
 
 const NAV_LINKS: Array<{ label: string; to: string }> = [
   { label: 'Shop', to: '/products' },
-  { label: 'Collections', to: '/collections' },
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },
 ];
@@ -152,12 +152,9 @@ const NavbarAuthControls: React.FC = () => {
 };
 
 // --- Navbar ---
-interface NavbarProps {
-  logo: string;
-}
-
-export const Navbar: React.FC<NavbarProps> = ({ logo }) => {
+export const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const { isAuthenticated, user } = useAuth();
   const { cartCount } = useCart();
   const isAdmin = isAuthenticated && user?.role === 'admin';
@@ -168,6 +165,15 @@ export const Navbar: React.FC<NavbarProps> = ({ logo }) => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileNavOpen(false);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [mobileNavOpen]);
+
   return (
     <nav
       className={`sticky top-0 z-50 bg-[#0B0B0B] border-b border-zinc-800/80 transition-shadow duration-300 ${
@@ -175,20 +181,18 @@ export const Navbar: React.FC<NavbarProps> = ({ logo }) => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
-        <div className="flex items-center gap-6 lg:gap-10">
+        <div className="flex items-center gap-4 lg:gap-10">
           <button
             type="button"
-            className="material-icons-round text-zinc-400 hover:text-[#39FF14] transition-colors lg:hidden"
-            aria-label="Menu"
+            onClick={() => setMobileNavOpen((open) => !open)}
+            className="inline-flex lg:hidden material-icons-round text-zinc-400 hover:text-[#39FF14] transition-colors"
+            aria-label={mobileNavOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileNavOpen}
           >
-            menu
+            {mobileNavOpen ? 'close' : 'menu'}
           </button>
-          <Link
-            to="/"
-            className="text-[#39FF14] font-black text-lg sm:text-xl tracking-tighter uppercase italic shrink-0"
-            style={{ textShadow: '0 0 20px rgba(57,255,20,0.35)' }}
-          >
-            {logo}
+          <Link to="/" className="shrink-0" onClick={() => setMobileNavOpen(false)}>
+            <SiteLogo className="h-8 sm:h-9 w-auto" />
           </Link>
           <ul className="hidden lg:flex items-center gap-8">
             {NAV_LINKS.map((link) => (
@@ -204,13 +208,6 @@ export const Navbar: React.FC<NavbarProps> = ({ logo }) => {
           </ul>
         </div>
         <div className="flex items-center gap-3 sm:gap-4 text-white">
-          <button
-            type="button"
-            className="material-icons-round text-zinc-400 hover:text-[#39FF14] hover:drop-shadow-[0_0_8px_rgba(57,255,20,0.6)] transition-all"
-            aria-label="Search"
-          >
-            search
-          </button>
           {isAdmin && (
             <Link
               to="/admin"
@@ -220,26 +217,58 @@ export const Navbar: React.FC<NavbarProps> = ({ logo }) => {
               Admin Dashboard
             </Link>
           )}
-        {
-            !isAdmin &&
-            <Link
-            to="/cart"
-            className="relative group"
-            aria-label="Cart"
-            >
-            <span className="material-icons-round text-zinc-300 group-hover:text-[#39FF14] transition-colors">
-              shopping_cart
-            </span>
-            {isAuthenticated && cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-[#39FF14] text-[#0B0B0B] text-[10px] font-black leading-[18px] text-center shadow-[0_0_10px_rgba(57,255,20,0.55)]">
-                {cartCount > 99 ? '99+' : cartCount}
+          {!isAdmin && (
+            <Link to="/cart" className="relative group" aria-label="Cart">
+              <span className="material-icons-round text-zinc-300 group-hover:text-[#39FF14] transition-colors">
+                shopping_cart
               </span>
-            )}
-          </Link>
-        }
+              {isAuthenticated && cartCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-[#39FF14] text-[#0B0B0B] text-[10px] font-black leading-[18px] text-center shadow-[0_0_10px_rgba(57,255,20,0.55)]">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+            </Link>
+          )}
           <NavbarAuthControls />
         </div>
       </div>
+
+      {mobileNavOpen && (
+        <>
+          <button
+            type="button"
+            className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+            aria-label="Close menu overlay"
+            onClick={() => setMobileNavOpen(false)}
+          />
+          <div className="absolute left-0 right-0 top-full z-50 bg-[#0B0B0B] border-b border-zinc-800 lg:hidden">
+            <ul className="px-4 py-4 space-y-1">
+              {NAV_LINKS.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    to={link.to}
+                    onClick={() => setMobileNavOpen(false)}
+                    className="block px-3 py-3 text-[10px] font-black uppercase tracking-widest text-zinc-300 hover:text-[#39FF14] transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              {isAdmin && (
+                <li>
+                  <Link
+                    to="/admin"
+                    onClick={() => setMobileNavOpen(false)}
+                    className="block px-3 py-3 text-[10px] font-black uppercase tracking-widest text-zinc-300 hover:text-[#39FF14] transition-colors"
+                  >
+                    Admin Dashboard
+                  </Link>
+                </li>
+              )}
+            </ul>
+          </div>
+        </>
+      )}
     </nav>
   );
 };
@@ -251,6 +280,7 @@ interface HeroSliderProps {
     title: string;
     subtitle: string;
     cta: string;
+    ctaLink?: string;
   }>;
 }
 
@@ -290,9 +320,15 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ slides }) => (
               <p className="text-zinc-400 text-sm sm:text-base mb-10 max-w-lg font-medium leading-relaxed">
                 {slide.subtitle}
               </p>
-              <button type="button" className="btn-primary w-fit text-sm sm:text-base">
-                {slide.cta}
-              </button>
+              {slide.ctaLink ? (
+                <Link to={slide.ctaLink} className="btn-primary w-fit text-sm sm:text-base">
+                  {slide.cta}
+                </Link>
+              ) : (
+                <Link to="/products" className="btn-primary w-fit text-sm sm:text-base">
+                  {slide.cta}
+                </Link>
+              )}
             </div>
           </div>
         </SwiperSlide>
@@ -303,12 +339,16 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ slides }) => (
 
 // --- CategoryCard ---
 interface CategoryCardProps {
+  id: string;
   title: string;
   image: string;
 }
 
-export const CategoryCard: React.FC<CategoryCardProps> = ({ title, image }) => (
-  <article className="relative group overflow-hidden rounded-sm aspect-[4/5] sm:aspect-[16/10] bg-[#0B0B0B] border border-zinc-800 cursor-pointer transition-all duration-500 hover:border-[#39FF14] hover:shadow-[0_0_35px_rgba(57,255,20,0.25)] hover:scale-[1.02]">
+export const CategoryCard: React.FC<CategoryCardProps> = ({ id, title, image }) => (
+  <Link
+    to={`/products?category=${id}`}
+    className="block relative group overflow-hidden rounded-sm aspect-[4/5] sm:aspect-[16/10] bg-[#0B0B0B] border border-zinc-800 transition-all duration-500 hover:border-[#39FF14] hover:shadow-[0_0_35px_rgba(57,255,20,0.25)] hover:scale-[1.02]"
+  >
     <img
       src={image}
       alt={title}
@@ -326,7 +366,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ title, image }) => (
       </span>
     </div>
     <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#39FF14] scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500 shadow-[0_0_15px_rgba(57,255,20,0.8)]" />
-  </article>
+  </Link>
 );
 
 // --- ProductCard ---
@@ -468,52 +508,47 @@ export const WhyUsCard: React.FC<WhyUsCardProps> = ({ icon, title, desc }) => (
 );
 
 // --- Footer ---
-const FOOTER_COMPANY = ['About', 'Careers', 'Sustainability', 'Press'];
-const FOOTER_SUPPORT = ['Contact', 'Shipping', 'Returns', 'FAQ'];
+const FOOTER_COMPANY: Array<{ label: string; to: string }> = [
+  { label: 'About Us', to: '/about' },
+  { label: 'Contact', to: '/contact' },
+  { label: 'Shop', to: '/products' },
+];
 
 interface FooterProps {
-  categoryNames?: string[];
+  categories?: Array<{ id: string; name: string }>;
 }
 
-export const Footer: React.FC<FooterProps> = ({ categoryNames = [] }) => {
+export const Footer: React.FC<FooterProps> = ({ categories = [] }) => {
   const shopLinks =
-    categoryNames.length > 0 ? categoryNames : ['Women', 'Men', 'Industrial', 'New Arrivals'];
+    categories.length > 0
+      ? categories.map((c) => ({ label: c.name, to: `/products?category=${c.id}` }))
+      : [{ label: 'All Products', to: '/products' }];
 
   return (
   <footer className="bg-[#0B0B0B] text-white border-t border-zinc-800">
     <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pt-16 pb-10">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-14">
         <div className="lg:col-span-4 space-y-5">
-          <h4 className="text-[#39FF14] font-black text-2xl italic uppercase tracking-tighter">
-            Cossack
-          </h4>
+          <Link to="/">
+            <SiteLogo className="h-10 w-auto" />
+          </Link>
           <p className="text-zinc-500 text-sm leading-relaxed max-w-sm">
             Technical precision meets textile heritage. Redefining high-fidelity manufacturing for
             the modern industrial world.
           </p>
-          <div className="flex gap-3 pt-2">
-            {[
-              { icon: 'public', label: 'Website' },
-              { icon: 'hub', label: 'Network' },
-              { icon: 'mail', label: 'Email' },
-            ].map(({ icon, label }) => (
-              <a
-                key={icon}
-                href="#"
-                aria-label={label}
-                className="w-11 h-11 border border-zinc-800 rounded-sm flex items-center justify-center text-zinc-400 hover:border-[#39FF14] hover:text-[#39FF14] hover:shadow-[0_0_20px_rgba(57,255,20,0.35)] transition-all duration-300"
-              >
-                <span className="material-icons-round text-xl">{icon}</span>
-              </a>
-            ))}
-          </div>
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#39FF14] transition-colors"
+          >
+            <span className="material-icons-round text-base">mail</span>
+            Get in Touch
+          </Link>
         </div>
 
         {(
           [
             ['Shop', shopLinks],
             ['Company', FOOTER_COMPANY],
-            ['Support', FOOTER_SUPPORT],
           ] as const
         ).map(([heading, links]) => (
           <div key={heading} className="lg:col-span-2 lg:col-start-auto">
@@ -522,13 +557,13 @@ export const Footer: React.FC<FooterProps> = ({ categoryNames = [] }) => {
             </h5>
             <ul className="space-y-3">
               {links.map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
+                <li key={link.label}>
+                  <Link
+                    to={link.to}
                     className="text-zinc-500 text-sm hover:text-[#39FF14] transition-colors duration-200"
                   >
-                    {link}
-                  </a>
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>

@@ -1,11 +1,7 @@
 import type { Category, Product } from '../types/api';
-import categoryFallback from '../assets/hero.png';
+import { CATEGORY_FALLBACK_IMAGES, HERO_IMAGES } from '../lib/siteAssets';
 
-const CATEGORY_FALLBACKS = [
-  'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80',
-  'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1600&q=80',
-  'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600&q=80',
-];
+const categoryFallback = HERO_IMAGES.hozri2;
 
 export function parsePrice(value: string | number): number {
   const n = typeof value === 'number' ? value : parseFloat(value);
@@ -57,7 +53,7 @@ export function getCategoryImage(
 ): string {
   const match = products.find((p) => p.category_id === category.id || p.category?.id === category.id);
   if (match) return getProductImage(match);
-  return CATEGORY_FALLBACKS[index % CATEGORY_FALLBACKS.length] ?? categoryFallback;
+  return CATEGORY_FALLBACK_IMAGES[index % CATEGORY_FALLBACK_IMAGES.length] ?? categoryFallback;
 }
 
 export function selectFeaturedProducts(products: Product[], limit = 4): Product[] {

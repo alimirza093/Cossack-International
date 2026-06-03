@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ProductCard } from '../src_components_index';
 import type { Product } from '../../types/api';
 import type { ProductCardModel } from '../../utils/product';
@@ -16,12 +17,12 @@ interface ProductSectionProps {
 }
 
 const viewAllButton = (
-  <button
-    type="button"
+  <Link
+    to="/products"
     className="bg-[#0B0B0B] text-white px-5 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-[#39FF14] hover:text-[#0B0B0B] hover:shadow-[0_0_20px_rgba(57,255,20,0.4)] transition-all duration-300 shrink-0"
   >
     View All
-  </button>
+  </Link>
 );
 
 const ProductSection: React.FC<ProductSectionProps> = ({

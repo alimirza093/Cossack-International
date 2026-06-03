@@ -1,29 +1,41 @@
-import heroImg from '../assets/hero.png';
-
-const factoryImg =
-  'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600&q=80';
-const productImg =
-  'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1600&q=80';
+import { HERO_IMAGES } from '../lib/siteAssets';
 
 /** Static marketing content for hero — not catalog data */
 export const heroSlides = [
   {
-    image: factoryImg,
+    image: HERO_IMAGES.hozri1,
+    title: 'Premium Hosiery',
+    subtitle: 'Precision-knit hosiery engineered for comfort, durability, and consistent fit at scale.',
+    cta: 'Shop Hosiery',
+    ctaLink: '/products',
+  },
+  {
+    image: HERO_IMAGES.puffer1,
+    title: 'Technical Outerwear',
+    subtitle: 'Insulated puffer jackets built with industrial-grade materials and refined construction.',
+    cta: 'Shop Jackets',
+    ctaLink: '/products',
+  },
+  {
+    image: HERO_IMAGES.hozri3,
     title: 'Cossack International',
-    subtitle: 'Industrial-grade textiles built for performance, precision, and global scale.',
-    cta: 'Explore Collection',
+    subtitle: 'Industrial-grade textiles built for performance, precision, and global manufacturing.',
+    cta: 'View Products',
+    ctaLink: '/products',
   },
   {
-    image: productImg,
-    title: 'Engineered Apparel',
-    subtitle: 'Premium fabrics and technical construction — designed for the modern athlete.',
+    image: HERO_IMAGES.puffer2,
+    title: 'Built for Performance',
+    subtitle: 'From yarn selection to final inspection — every garment meets export-quality standards.',
     cta: 'Shop Now',
+    ctaLink: '/products',
   },
   {
-    image: heroImg,
+    image: HERO_IMAGES.hozri5,
     title: 'Heritage. Reinvented.',
-    subtitle: 'Decades of manufacturing excellence powering the next generation of sportswear.',
-    cta: 'Discover Brand',
+    subtitle: 'Decades of textile manufacturing excellence powering the next generation of apparel.',
+    cta: 'About Us',
+    ctaLink: '/about',
   },
 ];
 

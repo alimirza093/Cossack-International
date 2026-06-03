@@ -1,6 +1,8 @@
 import type { Product, ProductImage, ProductVariant } from '../types/api';
-import categoryFallback from '../assets/hero.png';
+import { HERO_IMAGES } from '../lib/siteAssets';
 import { getProductImage } from './product';
+
+const categoryFallback = HERO_IMAGES.hozri1;
 
 export function getVariantImages(variant: ProductVariant | null, product: Product): ProductImage[] {
   if (variant?.images?.length) {

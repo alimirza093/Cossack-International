@@ -8,6 +8,7 @@ import WhyUsSection from '../components/home/WhyUsSection';
 import PromoBanner from '../components/home/PromoBanner';
 import TestimonialsSection from '../components/home/TestimonialsSection';
 import NewsletterSection from '../components/home/NewsletterSection';
+import GallerySection from '../components/home/GallerySection';
 import QuickViewModal from '../components/home/QuickViewModal';
 import { CatalogErrorBanner } from '../components/home/AsyncState';
 import type { Product } from '../types/api';
@@ -33,11 +34,14 @@ const Home: React.FC = () => {
     setQuickViewProduct(null);
   }, []);
 
-  const footerCategoryNames = useMemo(() => categories.map((c) => c.name), [categories]);
+  const footerCategories = useMemo(
+    () => categories.map((c) => ({ id: c.id, name: c.name })),
+    [categories]
+  );
 
   return (
     <div className="min-h-screen bg-[#F9F9F9] font-sans selection:bg-[#39FF14] selection:text-[#0B0B0B] overflow-x-hidden">
-      <Navbar logo="COSSACK" />
+      <Navbar />
 
       <main>
         <HeroSlider slides={heroSlides} />
@@ -70,6 +74,8 @@ const Home: React.FC = () => {
 
         <WhyUsSection />
 
+        <GallerySection />
+
         <PromoBanner />
 
         <TestimonialsSection />
@@ -77,7 +83,7 @@ const Home: React.FC = () => {
         <NewsletterSection />
       </main>
 
-      <Footer categoryNames={footerCategoryNames} />
+      <Footer categories={footerCategories} />
 
       <QuickViewModal product={quickViewProduct} onClose={closeQuickView} />
     </div>
