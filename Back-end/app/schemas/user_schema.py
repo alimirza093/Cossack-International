@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr
+from datetime import datetime
 
 class UserProfileOut(BaseModel):
     id: UUID
@@ -8,6 +9,7 @@ class UserProfileOut(BaseModel):
     last_name: str
     email: EmailStr
     role: str
+    created_at: datetime
     phone_number: str | None = None
     address: str | None = None
 

@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 import cloudinary.uploader
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
@@ -12,6 +14,15 @@ from uuid import UUID
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+
+
+def ensure_user_created_at(user: User, db: Session) -> User:
+    if user.created_at is None:
+        user.created_at = datetime.now(timezone.utc)
+        db.commit()
+        db.refresh(user)
+    return user
+
 
 def get_current_user(
     token: str = Depends(oauth2_scheme),
@@ -32,7 +43,7 @@ def get_current_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return user
+    return ensure_user_created_at(user, db)
 
 
 

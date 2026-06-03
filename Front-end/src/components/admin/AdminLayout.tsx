@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Navbar } from '../src_components_index';
+import { MobileAdminNav } from './MobileAdminNav';
 import { useAuth } from '../../context/AuthContext';
 
 interface AdminLayoutProps {
@@ -70,7 +71,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </div>
         </aside>
         <div className="w-full">
-          <main className="px-4 sm:px-6 lg:px-8 py-10 md:py-16">{children}</main>
+          <main className="px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+            <MobileAdminNav activeKey={activeKey} onLogout={handleLogout} />
+            {children}
+          </main>
         </div>
       </div>
     </div>

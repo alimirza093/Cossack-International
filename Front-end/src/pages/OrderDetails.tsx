@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Footer, Navbar } from '../components/src_components_index';
 import Toast from '../components/ui/Toast';
 import { getOrderById, getOrderErrorMessage } from '../api/orderService';
+import { useAuthenticatedEffect } from '../hooks/useAuthenticatedEffect';
 import type { Order, OrderStatus, ProductVariant } from '../types/api';
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
   pending: 'bg-amber-50 text-amber-700 border-amber-200',
-  confirmed: 'bg-blue-50 text-blue-700 border-blue-200',
   processing: 'bg-blue-50 text-blue-700 border-blue-200',
   shipped: 'bg-purple-50 text-purple-700 border-purple-200',
   delivered: 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -46,23 +46,24 @@ const OrderDetails: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!id) return;
-    const load = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await getOrderById(id);
-        setOrder(data);
-      } catch (err) {
-        setError(getOrderErrorMessage(err));
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    void load();
-  }, [id]);
+  useAuthenticatedEffect(
+    (isActive) => {
+      if (!id) return;
+      void (async () => {
+        setLoading(true);
+        setError(null);
+        try {
+          const data = await getOrderById(id);
+          if (isActive()) setOrder(data);
+        } catch (err) {
+          if (isActive()) setError(getOrderErrorMessage(err));
+        } finally {
+          if (isActive()) setLoading(false);
+        }
+      })();
+    },
+    [id]
+  );
 
   return (
     <div className="min-h-screen bg-[#F9F9F9] font-sans selection:bg-[#39FF14] selection:text-[#0B0B0B]">

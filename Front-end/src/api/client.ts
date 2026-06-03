@@ -1,5 +1,5 @@
 import type { ApiError } from '../types/api';
-import { getStoredToken } from '../lib/tokenStorage';
+import { getAuthToken } from '../lib/authSession';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? '/api').replace(/\/$/, '');
 
@@ -24,10 +24,15 @@ export async function apiFetch<T>(
   };
 
   if (options?.auth) {
-    const token = getStoredToken();
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
+    const token = getAuthToken();
+    if (!token) {
+      const error: ApiError = {
+        message: 'Please sign in to continue.',
+        status: 401,
+      };
+      throw error;
     }
+    headers.Authorization = `Bearer ${token}`;
   }
 
   let response: Response;

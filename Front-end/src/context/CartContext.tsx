@@ -3,11 +3,14 @@ import {
   addToCart,
   clearCart as clearCartApi,
   getCart,
+  getCartErrorMessage,
   removeItem as removeItemApi,
   updateQuantity as updateQuantityApi,
   type AddToCartPayload,
 } from '../api/cartService';
+import { getAuthToken } from '../lib/authSession';
 import { useAuth } from './AuthContext';
+import type { ApiError } from '../types/api';
 import type { Cart } from '../types/api';
 
 interface CartContextValue {
@@ -40,34 +43,60 @@ function createEmptyCart(): Cart {
 }
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const { user, isAuthenticated, isAuthReady } = useAuth();
   const [cart, setCart] = useState<Cart | null>(null);
   const [isCartLoading, setIsCartLoading] = useState(false);
 
   const refreshCart = useCallback(async () => {
-    if (!isAuthenticated) return;
-    if (user?.role != "admin"){
-        setIsCartLoading(true);
-        try {
-            const data = await getCart();
-            setCart(data);
-        } finally {
-            setIsCartLoading(false);
-        }
+    if (!isAuthenticated || user?.role === 'admin') {
+      setCart(null);
+      return;
     }
-  }, [isAuthenticated]);
+    setIsCartLoading(true);
+    try {
+      const data = await getCart();
+      setCart(data);
+    } finally {
+      setIsCartLoading(false);
+    }
+  }, [isAuthenticated, user?.role]);
 
   useEffect(() => {
-    if (isAuthLoading || !isAuthenticated) return;
+    if (!isAuthReady || !isAuthenticated) {
+      if (!isAuthenticated) setCart(null);
+      return;
+    }
     void refreshCart();
-  }, [isAuthenticated, isAuthLoading, refreshCart]);
+  }, [isAuthenticated, isAuthReady, refreshCart]);
 
   const addItem = useCallback(
     async (payload: AddToCartPayload) => {
-      await addToCart(payload);
-      await refreshCart();
+      if (!getAuthToken()) {
+        const error: ApiError = {
+          message: 'Please sign in to add items to your cart.',
+          status: 401,
+        };
+        throw error;
+      }
+      if (user?.role === 'admin') {
+        const error: ApiError = {
+          message: 'Admin accounts cannot add items to the cart.',
+          status: 403,
+        };
+        throw error;
+      }
+      try {
+        await addToCart(payload);
+      } catch (err) {
+        throw { message: getCartErrorMessage(err), status: (err as ApiError).status };
+      }
+      try {
+        await refreshCart();
+      } catch {
+        /* Item was added; cart refresh can fail without blocking success. */
+      }
     },
-    [refreshCart]
+    [refreshCart, user?.role]
   );
 
   const updateItemQuantity = useCallback(

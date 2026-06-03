@@ -1,43 +1,40 @@
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session, joinedload
+from decimal import Decimal
 from uuid import UUID
-from database.db import get_db
+
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func
+from sqlalchemy.orm import Session, joinedload
+
+from database.db import get_db
 from model.db_models import (
     Cart,
     CartItem,
     Order,
     OrderItem,
-    Product,
-    ProductConfig,
-    ProductConfigOption,
-    ProductVariant,
+    User,
 )
-from auth.jwt_handler import verify_token
-from utils.uuid_utils import parse_uuid
-from schemas.order_schema import OrderOut, CreateOrderRequest
-from decimal import Decimal
+from schemas.order_schema import CreateOrderRequest, OrderOut
+from utils.helping_funcs import get_current_user
 
 router = APIRouter()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+
+
+def _reject_admin_orders(user: User) -> None:
+    if user.role == "admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Admin accounts cannot place customer orders",
+        )
 
 
 @router.post("/", response_model=OrderOut, status_code=201)
 def create_order(
     data: CreateOrderRequest,
-    token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    payload = verify_token(token)
-
-    if not payload:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid Token",
-        )
-
-    user_id = parse_uuid(payload.get("user_id"))
+    _reject_admin_orders(current_user)
+    user_id = current_user.id
 
     if not data.cart_item_ids:
         raise HTTPException(
@@ -80,7 +77,6 @@ def create_order(
     order_total = Decimal("0.00")
 
     for item in selected_items:
-
         if not item.product:
             raise HTTPException(
                 status_code=400,
@@ -117,7 +113,6 @@ def create_order(
         order_total += Decimal(item.item_total)
 
     try:
-
         order = Order(
             user_id=user_id,
             total_price=order_total,
@@ -128,7 +123,6 @@ def create_order(
         db.flush()
 
         for item in selected_items:
-
             order_item = OrderItem(
                 order_id=order.id,
                 product_id=item.product_id,
@@ -179,48 +173,30 @@ def create_order(
 
 @router.get("/my", response_model=list[OrderOut])
 def get_my_orders(
-    token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    payload = verify_token(token)
+    _reject_admin_orders(current_user)
 
-    if not payload:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid Token",
-        )
-
-    user_id = parse_uuid(payload.get("user_id"))
-
-    orders = (
+    return (
         db.query(Order)
         .options(
             joinedload(Order.items).joinedload(OrderItem.product),
             joinedload(Order.items).joinedload(OrderItem.variant),
         )
-        .filter(Order.user_id == user_id)
+        .filter(Order.user_id == current_user.id)
         .order_by(Order.created_at.desc())
         .all()
     )
-
-    return orders
 
 
 @router.get("/{order_id}", response_model=OrderOut)
 def get_order(
     order_id: UUID,
-    token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    payload = verify_token(token)
-
-    if not payload:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid Token",
-        )
-
-    user_id = parse_uuid(payload.get("user_id"))
+    _reject_admin_orders(current_user)
 
     order = (
         db.query(Order)
@@ -230,7 +206,7 @@ def get_order(
         )
         .filter(
             Order.id == order_id,
-            Order.user_id == user_id,
+            Order.user_id == current_user.id,
         )
         .first()
     )

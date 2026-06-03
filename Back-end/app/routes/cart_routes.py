@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session, joinedload
+from decimal import Decimal
 from uuid import UUID
-from database.db import get_db
+
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func
+from sqlalchemy.orm import Session, joinedload
+
+from database.db import get_db
 from model.db_models import (
     Cart,
     CartItem,
@@ -11,32 +13,25 @@ from model.db_models import (
     ProductConfig,
     ProductConfigOption,
     ProductVariant,
+    User,
 )
-from auth.jwt_handler import verify_token
-from utils.uuid_utils import parse_uuid
-from schemas.cart_schema import CartItemCreate, UpdateQuantity, CartOut
-from decimal import Decimal
+from schemas.cart_schema import CartItemCreate, CartOut, UpdateQuantity
+from utils.helping_funcs import get_current_user
 
 router = APIRouter()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+
+def _reject_admin_cart(user: User) -> None:
+    if user.role == "admin":
+        raise HTTPException(status_code=403, detail="Admin accounts cannot use the cart")
 
 
 @router.get("/", status_code=200, response_model=CartOut)
-def get_cart(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-
-    payload = verify_token(token)
-
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid Token")
-
-    if payload.role == "admin":
-        raise HTTPException(status_code=403, detail="Admin not allow")
-
-    user_id = parse_uuid(payload.get("user_id"))
-
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid Token")
+def get_cart(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _reject_admin_cart(current_user)
 
     cart = (
         db.query(Cart)
@@ -44,13 +39,13 @@ def get_cart(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db))
             joinedload(Cart.items).joinedload(CartItem.product),
             joinedload(Cart.items).joinedload(CartItem.variant),
         )
-        .filter(Cart.user_id == user_id)
+        .filter(Cart.user_id == current_user.id)
         .first()
     )
 
     if not cart:
         return {
-            "user_id": user_id,
+            "user_id": current_user.id,
             "grand_total": Decimal("0.00"),
             "items": [],
         }
@@ -61,21 +56,11 @@ def get_cart(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db))
 @router.post("/add", status_code=201)
 def add_to_cart(
     data: CartItemCreate,
-    token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-
-    payload = verify_token(token)
-
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid Token")
-
-    user_id = parse_uuid(payload.get("user_id"))
-
-    if payload.get("role") == "admin":
-        raise HTTPException(
-            status_code=403, detail="Admin won't allow to cart the products"
-        )
+    _reject_admin_cart(current_user)
+    user_id = current_user.id
 
     product = db.query(Product).filter(Product.id == data.product_id).first()
 
@@ -162,7 +147,6 @@ def add_to_cart(
     matching_item = None
 
     for item in existing_items:
-
         existing_options = sorted(
             item.selected_options,
             key=lambda x: (
@@ -243,20 +227,12 @@ def add_to_cart(
 @router.delete("/{cart_item_id}", status_code=200)
 def del_cart_temp(
     cart_item_id: UUID,
-    token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    payload = verify_token(token)
+    _reject_admin_cart(current_user)
 
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid Token")
-
-    user_id = parse_uuid(payload.get("user_id"))
-
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid User")
-
-    cart = db.query(Cart).filter(Cart.user_id == user_id).first()
+    cart = db.query(Cart).filter(Cart.user_id == current_user.id).first()
 
     if not cart:
         raise HTTPException(status_code=404, detail="Cart not found for this user")
@@ -297,17 +273,12 @@ def del_cart_temp(
 
 @router.delete("/clear")
 def clear_cart(
-    token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    payload = verify_token(token)
+    _reject_admin_cart(current_user)
 
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid Token")
-
-    user_id = parse_uuid(payload.get("user_id"))
-
-    cart = db.query(Cart).filter(Cart.user_id == user_id).first()
+    cart = db.query(Cart).filter(Cart.user_id == current_user.id).first()
 
     if not cart:
         raise HTTPException(status_code=404, detail="Cart not found")
@@ -332,15 +303,10 @@ def clear_cart(
 def update_cart_item_quantity(
     cart_item_id: UUID,
     data: UpdateQuantity,
-    token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    payload = verify_token(token)
-
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid Token")
-
-    user_id = parse_uuid(payload.get("user_id"))
+    _reject_admin_cart(current_user)
 
     if data.quantity < 1:
         raise HTTPException(
@@ -348,7 +314,7 @@ def update_cart_item_quantity(
             detail="Quantity must be greater than 0",
         )
 
-    cart = db.query(Cart).filter(Cart.user_id == user_id).first()
+    cart = db.query(Cart).filter(Cart.user_id == current_user.id).first()
 
     if not cart:
         raise HTTPException(
@@ -379,7 +345,6 @@ def update_cart_item_quantity(
             detail="Variant not found",
         )
 
-    # Current stock validation
     if data.quantity > variant.stock:
         raise HTTPException(
             status_code=400,
