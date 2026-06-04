@@ -24,7 +24,7 @@ import AdminProductEditPage from './pages/admin/AdminProductEditPage';
 import AdminCategoriesPage from './pages/admin/AdminCategoriesPage';
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
 import AdminOrderDetailPage from './pages/admin/AdminOrderDetailPage';
-import PlaceholderPage from './pages/PlaceholderPage';
+import Checkout from './pages/Checkout';
 
 const App: React.FC = () => (
   <BrowserRouter>
@@ -134,7 +134,7 @@ const App: React.FC = () => (
             path="/checkout"
             element={
               <CustomerRoute>
-                <PlaceholderPage title="Checkout" description="Secure checkout is on the way. Your session is active." />
+                <Checkout />
               </CustomerRoute>
             }
           />

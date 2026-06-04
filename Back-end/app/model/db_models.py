@@ -201,6 +201,8 @@ class Order(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"))
     total_price = Column(Numeric(10, 2), nullable=False)
+    delivery_address = Column(Text, nullable=False)
+    payment_method = Column(String(50), nullable=False, default="cash_on_delivery")
     status = Column(String(20), default="pending")
     created_at = Column(DateTime, default=func.current_timestamp())
 

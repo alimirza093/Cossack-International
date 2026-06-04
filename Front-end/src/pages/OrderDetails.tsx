@@ -4,6 +4,7 @@ import { Footer, Navbar } from '../components/src_components_index';
 import Toast from '../components/ui/Toast';
 import { getOrderById, getOrderErrorMessage } from '../api/orderService';
 import { useAuthenticatedEffect } from '../hooks/useAuthenticatedEffect';
+import { formatPaymentMethod } from '../lib/orderConstants';
 import type { Order, OrderStatus, ProductVariant } from '../types/api';
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
@@ -111,6 +112,22 @@ const OrderDetails: React.FC = () => {
                     <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Total Price</p>
                     <p className="text-sm font-black text-[#0B0B0B]">
                       Rs. {toNumber(order.total_price).toFixed(2)}
+                    </p>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">
+                      Delivery Address
+                    </p>
+                    <p className="text-sm text-[#0B0B0B] whitespace-pre-wrap break-words">
+                      {order.delivery_address}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">
+                      Payment Method
+                    </p>
+                    <p className="text-sm font-bold text-[#0B0B0B]">
+                      {formatPaymentMethod(order.payment_method)}
                     </p>
                   </div>
                 </div>

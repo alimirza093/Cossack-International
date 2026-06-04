@@ -7,6 +7,10 @@ from schemas.product_schema import ProductOut
 from enum import Enum
 
 
+PAYMENT_METHOD_COD = "cash_on_delivery"
+PAYMENT_METHOD_COD_LABEL = "Cash on Delivery"
+
+
 class OrderStatus(str, Enum):
     pending = "pending"
     processing = "processing"
@@ -57,6 +61,8 @@ class OrderOut(BaseModel):
     id: UUID
     user_id: UUID
     total_price: Decimal
+    delivery_address: str
+    payment_method: str
     status: str
     items: list[OrderItemOut] = Field(default_factory=list)
     created_at: datetime
@@ -67,3 +73,4 @@ class OrderOut(BaseModel):
 
 class CreateOrderRequest(BaseModel):
     cart_item_ids: list[UUID]
+    delivery_address: str
