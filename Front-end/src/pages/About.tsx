@@ -197,17 +197,18 @@ const About: React.FC = () => (
               {
                 icon: 'location_on',
                 label: 'Head Office',
-                value: 'Industrial Textile District, Export Processing Zone',
+                value: 'Building no 18/142 street no 2 mujahid road near janjua sports Sialkot Pakistan',
               },
               {
                 icon: 'mail',
                 label: 'Email',
-                value: 'info@cossack-intl.com',
+                value: 'cossackinternational68@gmail.com',
               },
               {
                 icon: 'schedule',
                 label: 'Business Hours',
-                value: 'Monday – Friday, 8:00 AM – 6:00 PM (GMT+5)',
+                value: 'Monday to Saturday 9AM to 9PM',
+                value2: 'Sunday 10AM to 10PM',
               },
             ].map((item) => (
               <div
@@ -220,6 +221,10 @@ const About: React.FC = () => (
                     {item.label}
                   </p>
                   <p className="text-sm text-zinc-600">{item.value}</p>
+                  {
+                      item?.value2 &&
+                      <p className="text-sm text-zinc-600">{item.value2}</p>
+                  }
                 </div>
               </div>
             ))}

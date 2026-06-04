@@ -590,6 +590,22 @@ export const Footer: React.FC<FooterProps> = ({ categories = [] }) => {
             <span className="material-icons-round text-base">mail</span>
             Get in Touch
           </Link>
+          <div className="pt-2 flex flex-col gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-500">
+            <a 
+            href="tel:+923084639171" 
+            className="inline-flex items-center gap-2 hover:text-[#39FF14] transition-colors"
+            >
+            <span className="material-icons-round text-base">phone</span>
+            +92 308 4639171
+            </a>
+            <a 
+            href="tel:+923228702004" 
+            className="inline-flex items-center gap-2 hover:text-[#39FF14] transition-colors"
+            >
+            <span className="material-icons-round text-base">phone</span>
+            +92 322 8702004
+            </a>
+          </div>
         </div>
 
         {(
@@ -618,9 +634,12 @@ export const Footer: React.FC<FooterProps> = ({ categories = [] }) => {
         ))}
       </div>
 
-      <div className="pt-8 border-t border-zinc-900 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="pt-8 border-t border-zinc-900 flex flex-col-reverse sm:flex-row justify-between items-center gap-4">
         <p className="text-[10px] text-zinc-600 uppercase tracking-[0.2em] font-bold">
           © {new Date().getFullYear()} Cossack International. All rights reserved.
+        </p>
+        <p className="text-[10px] text-zinc-600 uppercase tracking-[0.2em] font-bold">
+          cossackinternational68@gmail.com
         </p>
         <div className="w-16 h-0.5 bg-[#39FF14] shadow-[0_0_12px_rgba(57,255,20,0.5)]" />
       </div>
