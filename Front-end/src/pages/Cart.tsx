@@ -4,7 +4,6 @@ import { Footer, Navbar } from '../components/src_components_index';
 import Toast, { type ToastType } from '../components/ui/Toast';
 import { useCart } from '../context/CartContext';
 import { getCartErrorMessage } from '../api/cartService';
-import { createOrder, getOrderErrorMessage } from '../api/orderService';
 
 function toNumber(value: string | number | null | undefined): number {
   if (typeof value === 'number') return value;
@@ -29,10 +28,9 @@ const CartRowSkeleton: React.FC = () => (
 
 const Cart: React.FC = () => {
   const navigate = useNavigate();
-  const { cart, cartCount, cartTotal, isCartLoading, updateItemQuantity, removeCartItem, clearCart, refreshCart } = useCart();
+  const { cart, cartCount, cartTotal, isCartLoading, updateItemQuantity, removeCartItem, clearCart } = useCart();
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
   const [isClearing, setIsClearing] = useState(false);
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [confirmClearOpen, setConfirmClearOpen] = useState(false);
   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
@@ -105,22 +103,12 @@ const Cart: React.FC = () => {
     setSelectedItemIds([]);
   };
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     if (selectedItemIds.length === 0) {
       setToast({ message: 'Please select at least one cart item.', type: 'error' });
       return;
     }
-    setIsCheckingOut(true);
-    try {
-      const order = await createOrder(selectedItemIds);
-      await refreshCart();
-      setSelectedItemIds([]);
-      navigate('/order-success', { state: { orderId: order.id } });
-    } catch (err) {
-      setToast({ message: getOrderErrorMessage(err), type: 'error' });
-    } finally {
-      setIsCheckingOut(false);
-    }
+    navigate('/checkout', { state: { cartItemIds: selectedItemIds } });
   };
 
   return (
@@ -305,10 +293,10 @@ const Cart: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleCheckout}
-                  disabled={isCheckingOut || selectedItemIds.length === 0}
+                  disabled={selectedItemIds.length === 0}
                   className="btn-primary w-full inline-flex justify-center mt-6 text-sm disabled:opacity-50 disabled:pointer-events-none"
                 >
-                  {isCheckingOut ? 'Processing...' : 'Proceed To Checkout'}
+                  Proceed To Checkout
                 </button>
               </aside>
             </div>

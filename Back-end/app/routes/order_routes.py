@@ -14,7 +14,11 @@ from model.db_models import (
     Product,
     User,
 )
-from schemas.order_schema import CreateOrderRequest, OrderOut
+from schemas.order_schema import (
+    PAYMENT_METHOD_COD,
+    CreateOrderRequest,
+    OrderOut,
+)
 from utils.helping_funcs import get_current_user, is_product_available
 
 router = APIRouter()
@@ -41,6 +45,13 @@ def create_order(
         raise HTTPException(
             status_code=400,
             detail="No cart items selected",
+        )
+
+    delivery_address = data.delivery_address.strip()
+    if not delivery_address:
+        raise HTTPException(
+            status_code=400,
+            detail="Delivery address is required.",
         )
 
     cart = (
@@ -117,6 +128,8 @@ def create_order(
         order = Order(
             user_id=user_id,
             total_price=order_total,
+            delivery_address=delivery_address,
+            payment_method=PAYMENT_METHOD_COD,
             status="pending",
         )
 

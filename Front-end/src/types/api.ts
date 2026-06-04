@@ -120,6 +120,8 @@ export interface Order {
   id: string;
   user_id: string;
   total_price: string | number;
+  delivery_address: string;
+  payment_method: string;
   status: OrderStatus;
   items: OrderItem[];
   created_at: string;

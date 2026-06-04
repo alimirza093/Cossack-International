@@ -3,15 +3,19 @@ import { apiFetch } from './client';
 
 export interface CreateOrderPayload {
   cart_item_ids: string[];
+  delivery_address: string;
 }
 
-export function createOrder(cartItemIds: string[]): Promise<Order> {
+export function createOrder(cartItemIds: string[], deliveryAddress: string): Promise<Order> {
   return apiFetch<Order>(
     '/order/',
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cart_item_ids: cartItemIds } satisfies CreateOrderPayload),
+      body: JSON.stringify({
+        cart_item_ids: cartItemIds,
+        delivery_address: deliveryAddress.trim(),
+      } satisfies CreateOrderPayload),
     },
     { auth: true }
   );
@@ -27,6 +31,13 @@ export function getOrderById(orderId: string): Promise<Order> {
 
 export function getOrderErrorMessage(err: unknown): string {
   const error = err as ApiError;
+  if (error.status === 400 || error.status === 422) {
+    const msg = error.message?.toLowerCase() ?? '';
+    if (msg.includes('delivery address')) {
+      return 'Delivery address is required.';
+    }
+    return error.message ?? 'Could not place order. Please check your details.';
+  }
   if (error.status === 401) {
     return error.message && !error.message.startsWith('Request failed')
       ? error.message

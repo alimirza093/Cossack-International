@@ -14,6 +14,7 @@ import {
   updateOrderStatus,
 } from '../../api/adminOrderService';
 import type { Order, OrderStatus } from '../../types/api';
+import { formatPaymentMethod } from '../../lib/orderConstants';
 import { formatPrice, shortId, toNumber } from '../../utils/admin';
 
 type ToastState = { message: string; type: ToastType } | null;
@@ -126,6 +127,22 @@ const AdminOrderDetailPage: React.FC = () => {
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-1">Order ID</p>
                   <p className="text-sm font-bold text-[#0B0B0B]">{shortId(order.id, 12)}</p>
+                </div>
+                <div className="sm:col-span-2">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-1">
+                    Delivery Address
+                  </p>
+                  <p className="text-sm text-[#0B0B0B] whitespace-pre-wrap break-words">
+                    {order.delivery_address || '—'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-1">
+                    Payment Method
+                  </p>
+                  <p className="text-sm font-bold text-[#0B0B0B]">
+                    {formatPaymentMethod(order.payment_method)}
+                  </p>
                 </div>
               </div>
             </section>
