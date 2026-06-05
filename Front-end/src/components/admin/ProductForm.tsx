@@ -530,7 +530,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     <button
                       type="button"
                       onClick={() => addVariantImage(vIdx)}
-                      className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-[#39FF14] transition-colors"
+                      className="text-[12px] p-2 bg-[#000000] rounded-sm font-black uppercase tracking-widest text-white hover:text-[#39FF14] transition-colors"
                     >
                       + Add Image
                     </button>
