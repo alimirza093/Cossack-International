@@ -184,7 +184,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   return (
     <div className="bg-white border border-zinc-100 rounded-sm overflow-hidden">
-      <div className="p-6 space-y-8">
+      <div className="p-2 space-y-8">
         <section>
           <h2 className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-4">Basic Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -292,7 +292,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           <button
             type="button"
             onClick={addStatic}
-            className="mt-3 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-[#39FF14] transition-colors"
+            className="mt-3 p-2 rounded-sm bg-[#000000] text-[12px] font-black uppercase tracking-widest text-white hover:text-[#39FF14] transition-colors"
           >
             + Add Static Config
           </button>
@@ -304,7 +304,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             <button
               type="button"
               onClick={addDynamic}
-              className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-[#39FF14] transition-colors"
+              className="text-[12px] p-2 rounded-sm bg-[#000000] font-black uppercase tracking-widest text-white hover:text-[#39FF14] transition-colors"
             >
               + Add Config
             </button>
@@ -356,7 +356,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       <button
                         type="button"
                         onClick={() => addDynamicOption(cfgIdx)}
-                        className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-[#39FF14] transition-colors"
+                        className="text-[12px] p-2 rounded-sm bg-[#000000] font-black uppercase tracking-widest text-white hover:text-[#39FF14] transition-colors"
                       >
                         + Add Option
                       </button>
@@ -409,7 +409,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             <button
               type="button"
               onClick={addVariant}
-              className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-[#39FF14] transition-colors"
+              className="text-[12px] p-2 rounded-sm bg-[#000000] font-black uppercase tracking-widest text-white hover:text-[#39FF14] transition-colors"
             >
               + Add Variant
             </button>
