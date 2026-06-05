@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Toast, { type ToastType } from '../ui/Toast';
 import type {
   AdminConfigType,
@@ -28,9 +28,63 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const [form, setForm] = useState<AdminProductFormInput>(initialForm);
   const [toast, setToast] = useState<ToastState>(null);
 
+  const nameRef = useRef<HTMLInputElement>(null);
+  const newStaticRef = useRef<HTMLInputElement>(null);
+  const newDynamicRef = useRef<HTMLInputElement>(null);
+  const newVariantRef = useRef<HTMLInputElement>(null);
+  const staticMounted = useRef(false);
+  const configMounted = useRef(false);
+  const variantMounted = useRef(false);
+
   useEffect(() => {
     setForm(initialForm);
+
+    setTimeout(() => {
+      nameRef.current?.focus();
+    }, 0);
   }, [initialForm]);
+
+  useEffect(() => {
+
+    if (!staticMounted.current){
+        staticMounted.current = true;
+        return;
+    }
+
+    newStaticRef.current?.focus();
+    newStaticRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+    });
+  }, [form.static_configs.length])
+
+  useEffect(() => {
+
+    if (!configMounted.current){
+        configMounted.current = true;
+        return;
+    }
+
+    newDynamicRef.current?.focus();
+    newDynamicRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+    });
+  }, [form.dynamic_configs.length])
+
+  useEffect(() => {
+
+    if (!variantMounted.current){
+        variantMounted.current = true;
+        return;
+    }
+
+    newVariantRef.current?.focus();
+    newVariantRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+    });
+  }, [form.variants.length])
 
   const updateStatic = (idx: number, patch: Partial<{ key: string; value: string }>) => {
     setForm((prev) => {
@@ -190,7 +244,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
               <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">Name</label>
-              <input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} className={inputClass} />
+              <input ref={nameRef} value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} className={inputClass} />
             </div>
             <div className="md:col-span-2">
               <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
@@ -264,6 +318,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               {form.static_configs.map((cfg, idx) => (
                 <div key={`static-${idx}`} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <input
+                    ref={
+                        idx === form.static_configs.length - 1 ? newStaticRef : null
+                    }
                     value={cfg.key}
                     onChange={(e) => updateStatic(idx, { key: e.target.value })}
                     placeholder="Key"
@@ -321,6 +378,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         Config Name
                       </label>
                       <input
+                        ref={
+                          cfgIdx === form.dynamic_configs.length - 1 ? newDynamicRef : null
+                        }
                         value={cfg.name}
                         onChange={(e) => updateDynamic(cfgIdx, { name: e.target.value })}
                         className="w-full px-4 py-3.5 bg-white border border-zinc-200 rounded-sm text-sm"
@@ -423,6 +483,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       Color
                     </label>
                     <input
+                      ref={
+                        vIdx === form.variants.length - 1 ? newVariantRef : null
+                      }
                       value={variant.color}
                       onChange={(e) => updateVariant(vIdx, { color: e.target.value })}
                       className="w-full px-4 py-3.5 bg-white border border-zinc-200 rounded-sm text-sm"
