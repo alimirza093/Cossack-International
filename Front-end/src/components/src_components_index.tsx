@@ -264,7 +264,7 @@ export const Navbar: React.FC = () => {
           <button
             type="button"
             onClick={() => setMobileNavOpen((open) => !open)}
-            className="flex lg:hidden items-center justify-center w-10 h-10 -mr-1 material-icons-round text-zinc-400 hover:text-[#39FF14] transition-colors"
+            className="flex lg:!hidden items-center justify-center w-10 h-10 -mr-1 material-icons-round text-zinc-400 hover:text-[#39FF14] transition-colors"
             aria-label={mobileNavOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileNavOpen}
           >
