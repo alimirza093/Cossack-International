@@ -1,13 +1,13 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
+use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable,HasApiTokens,HasUuids;
 
     protected $table = 'users';
     protected $primaryKey = 'id';
@@ -20,4 +20,8 @@ class User extends Authenticatable
     ];
 
     protected $hidden = ['password_hash'];
+
+    public function getAuthPassword(){
+        return $this->password_hash;
+    }
 }
