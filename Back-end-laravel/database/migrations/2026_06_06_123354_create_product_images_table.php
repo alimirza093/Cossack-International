@@ -12,8 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('product_images', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('variant_id')->constrained('product_variants')->cascadeOnDelete();
+            $table->text('image_url');
+            $table->boolean('is_primary')->default(false);
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 
