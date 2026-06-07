@@ -62,7 +62,7 @@ Route::middleware(['auth:sanctum', 'admin.reject'])->prefix('cart')->controller(
 
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin/order')->group(function () {
     Route::get('/', [AdminOrderController::class, 'getAllOrders']);
-    Route::put('/{orderId', [AdminOrderController::class, 'updateOrderStatus']);
+    Route::put('/{orderId}', [AdminOrderController::class, 'updateOrderStatus']);
 });
 
 Route::middleware(['auth:sanctum', 'admin.reject'])
