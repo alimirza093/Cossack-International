@@ -49,3 +49,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileController::class, 'getProfile']);
     Route::put('/profile', [ProfileController::class, 'updateProfile']);
 });
+
+Route::middleware(['auth:sanctum', 'admin.reject'])->prefix('cart')->controller(CartController::class)->group(function () {
+    Route::get('/', 'getCart');
+    Route::post('/add', 'addToCart');
+    Route::delete('/{cartItemId}', 'delCart');
+    Route::delete('/clear', 'clearCart');
+    Route::patch('/item/{cartItemId}/quantity', 'updateQuantity');
+});
