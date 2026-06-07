@@ -13,7 +13,7 @@ class User extends Authenticatable
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'id',
@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password_hash',
         'role',
         'created_at',
+        'updated_at',
         'phone_number',
         'address'
     ];

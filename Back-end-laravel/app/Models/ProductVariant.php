@@ -12,15 +12,17 @@ class ProductVariant extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false;
-
+    public $timestamps = true;
+    const UPDATED_AT = null;
+    
     protected $fillable = [
         'id',
         'product_id',
         'color',
         'stock',
         'price_modifier',
-        'created_at'
+        'created_at',
+        'updated_at'
     ];
 
     protected $casts = [
@@ -35,7 +37,7 @@ class ProductVariant extends Model
 
     public function images()
     {
-        return $this->hasMany(ProductImage::class);
+        return $this->hasMany(ProductImage::class, 'variant_id');
     }
 
     public function cartItems()

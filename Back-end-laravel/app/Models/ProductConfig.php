@@ -28,7 +28,7 @@ class ProductConfig extends Model
 
     public function options()
     {
-        return $this->hasMany(ProductConfigOption::class);
+        return $this->hasMany(ProductConfigOption::class, 'config_id');
     }
 
 
