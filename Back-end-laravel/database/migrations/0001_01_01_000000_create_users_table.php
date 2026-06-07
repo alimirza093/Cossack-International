@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->text('password_hash');
             $table->string('role', 20)->default('user');
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
             $table->string('phone_number', 20)->nullable();
             $table->text('address')->nullable();
         });

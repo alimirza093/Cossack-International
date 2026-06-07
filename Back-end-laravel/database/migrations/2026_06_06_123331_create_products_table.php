@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->foreignUuid('category_id')->constrained()->cascadeOnDelete();
 
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

@@ -12,7 +12,8 @@ class Product extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false;
+    public $timestamps = true;
+    const UPDATED_AT = null;
 
     protected $fillable = [
         'id',
@@ -22,7 +23,8 @@ class Product extends Model
         'base_image',
         'is_deleted',
         'category_id',
-        'created_at'
+        'created_at',
+        'updated_at'
     ];
 
 

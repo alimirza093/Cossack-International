@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->integer('stock')->default(0);
             $table->decimal('price_modifier', 10, 2)->default(0);
             $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 
