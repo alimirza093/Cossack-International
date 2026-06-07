@@ -6,7 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Middleware\AdminRequired;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
-
+use App\Http\Controllers\ProfileController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -42,4 +42,9 @@ Route::prefix('/admin/products')->group(function (){
 Route::prefix('/user/products')->group(function (){
     Route::get('/', [ProductController::class, 'list_user_products']);
     Route::get('/{product_id}', [ProductController::class, 'get_public_product']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'getProfile']);
+    Route::put('/profile', [ProfileController::class, 'updateProfile']);
 });
