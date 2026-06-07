@@ -12,8 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('product_config_options', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('config_id')->constrained('product_configs')->cascadeOnDelete();
+            $table->string('value', 100);
+            $table->decimal('price_modifier', 10, 2)->default(0);
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

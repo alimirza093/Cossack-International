@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderItem extends Model
 {
+    use HasUuids;
     protected $table = 'order_items';
     protected $primaryKey = 'id';
     public $incrementing = false;
@@ -13,7 +15,15 @@ class OrderItem extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id', 'order_id', 'product_id', 'variant_id', 'selected_options', 'final_price', 'item_total', 'quantity', 'created_at'
+        'id',
+        'order_id',
+        'product_id',
+        'variant_id',
+        'selected_options',
+        'final_price',
+        'item_total',
+        'quantity',
+        'created_at'
     ];
 
     protected $casts = [
@@ -22,4 +32,19 @@ class OrderItem extends Model
         'item_total' => 'decimal:2',
         'quantity' => 'integer',
     ];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function variant()
+    {
+        return $this->belongsTo(ProductVariant::class);
+    }
 }

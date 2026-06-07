@@ -40,7 +40,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'password_hash' => Hash::make($request->password), // Standard Laravel Secure Bcrypt Hashing
             'role' => 'user',
-            'created_at'=> now(),
+            'created_at' => now(),
         ]);
 
         return response()->json(['message' => 'User registered successfully'], 200);

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class CartItem extends Model
 {
+    use HasUuids;
     protected $table = 'cart_items';
     protected $primaryKey = 'id';
     public $incrementing = false;
@@ -13,7 +15,15 @@ class CartItem extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id', 'cart_id', 'product_id', 'variant_id', 'selected_options', 'final_price', 'item_total', 'quantity', 'created_at'
+        'id',
+        'cart_id',
+        'product_id',
+        'variant_id',
+        'selected_options',
+        'final_price',
+        'item_total',
+        'quantity',
+        'created_at'
     ];
 
     protected $casts = [
@@ -22,4 +32,19 @@ class CartItem extends Model
         'item_total' => 'decimal:2',
         'quantity' => 'integer',
     ];
+
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function variant()
+    {
+        return $this->belongsTo(ProductVariant::class);
+    }
 }
