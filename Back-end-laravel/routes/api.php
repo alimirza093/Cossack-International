@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -57,3 +59,17 @@ Route::middleware(['auth:sanctum', 'admin.reject'])->prefix('cart')->controller(
     Route::delete('/clear', 'clearCart');
     Route::patch('/item/{cartItemId}/quantity', 'updateQuantity');
 });
+
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin/order')->group(function () {
+    Route::get('/', [AdminOrderController::class, 'getAllOrders']);
+    Route::put('/{orderId', [AdminOrderController::class, 'updateOrderStatus']);
+});
+
+Route::middleware(['auth:sanctum', 'admin.reject'])
+    ->prefix('order')
+    ->controller(OrderController::class)
+    ->group(function () {
+        Route::post('/', 'createOrder');
+        Route::get('/my', 'getMyOrders');
+        Route::get('/{orderId}', 'getOrder');
+    });
