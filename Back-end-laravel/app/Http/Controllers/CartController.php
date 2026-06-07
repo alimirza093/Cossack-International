@@ -195,7 +195,7 @@ class CartController extends Controller
 
     }
 
-    public function del_cart(string $cartItemId)
+    public function delCart(string $cartItemId)
     {
         $user = auth()->user();
 
@@ -229,7 +229,7 @@ class CartController extends Controller
         ]);
     }
 
-    public function clear_cart()
+    public function clearCart()
     {
         $user = auth()->user();
 
@@ -254,7 +254,7 @@ class CartController extends Controller
 
     }
 
-    public function update_quantity(updateQuantityRequest $request, string $cartItemId)
+    public function updateQuantity(updateQuantityRequest $request, string $cartItemId)
     {
         $user = auth()->user();
 

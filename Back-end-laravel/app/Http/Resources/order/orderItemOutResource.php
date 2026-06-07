@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Resources\cart;
+namespace App\Http\Resources\order;
 
 use App\Http\Resources\product\productOutResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class cartItemResource extends JsonResource
+class orderItemOutResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -21,7 +21,7 @@ class cartItemResource extends JsonResource
                 $this->whenLoaded('product')
             ),
             'variant' => $this->variant
-                ? new variantCartResource($this->variant)
+                ? new orderVariantOutResource($this->variant)
                 : null,
             'selected_options' => $this->selected_options,
             'quantity' => $this->quantity,
