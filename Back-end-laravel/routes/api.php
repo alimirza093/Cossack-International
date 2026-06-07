@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -30,7 +31,7 @@ Route::prefix('categories')->group(function () {
     });
 });
 
-Route::prefix('/admin/products')->group(function (){
+Route::prefix('/admin/products')->group(function () {
 
     Route::post('/full', [ProductController::class, 'create_product_full']);
     Route::put('/{product_id}', [ProductController::class, 'update_product']);
@@ -39,7 +40,15 @@ Route::prefix('/admin/products')->group(function (){
 
 });
 
-Route::prefix('/user/products')->group(function (){
+Route::prefix('/user/products')->group(function () {
     Route::get('/', [ProductController::class, 'list_user_products']);
     Route::get('/{product_id}', [ProductController::class, 'get_public_product']);
+});
+
+Route::middleware(['auth:sanctum', 'admin.reject'])->prefix('cart')->controller(CartController::class)->group(function () {
+    Route::get('/', 'getCart');
+    Route::post('/add', 'addToCart');
+    Route::delete('/{cartItemId}', 'delCart');
+    Route::delete('/clear', 'clearCart');
+    Route::patch('/item/{cartItemId}/quantity', 'updateQuantity');
 });
