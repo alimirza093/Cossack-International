@@ -12,8 +12,8 @@ class CategoryController extends Controller
     private function getCategoryOr404($id)
     {
         $category = Category::where('id', $id)
-                            ->where('is_deleted', false)
-                            ->first();
+            ->where('is_deleted', false)
+            ->first();
 
         if (!$category) {
             // FastAPI jaisa 404 response
@@ -45,8 +45,8 @@ class CategoryController extends Controller
     {
         // Duplicate check karne k liye
         $existing = Category::where('name', $request->name)
-                            ->where('is_deleted', false)
-                            ->first();
+            ->where('is_deleted', false)
+            ->first();
 
         if ($existing) {
             return response()->json(['detail' => 'Category name already exists'], 400);
@@ -61,8 +61,10 @@ class CategoryController extends Controller
         return response()->json([
             'message' => 'Category created successfully',
             'category' => [
+                'created_at' => $category->created_at,
                 'id' => $category->id,
-                'name' => $category->name
+                'name' => $category->name,
+                'is_deleted' => $category->is_deleted
             ]
         ], 200);
     }
@@ -71,7 +73,7 @@ class CategoryController extends Controller
     public function update_category(StoreCategoryRequest $request, $id)
     {
         $category = $this->getCategoryOr404($id);
-        
+
         $category->name = $request->name;
         $category->save();
 
