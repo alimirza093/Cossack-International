@@ -27,7 +27,7 @@ Route::prefix('categories')->group(function () {
 
     // Admin Protected Category Routes
     Route::middleware(['auth:sanctum', AdminRequired::class])->group(function () {
-        Route::post('/', [CategoryController::class, 'create_category']);
+        Route::post('/post-category', [CategoryController::class, 'create_category']);
         Route::put('/{category_id}', [CategoryController::class, 'update_category']);
         Route::delete('/{category_id}', [CategoryController::class, 'delete_category']);
     });
