@@ -26,13 +26,13 @@ class productOutResource extends JsonResource
                 $this->whenLoaded('category')
             ),
             'created_at' => $this->created_at,
-            'static_configs' => ProductStaticConfigResource::collection(
+            'static_configs' => productStaticConfigResource::collection(
                 $this->whenLoaded('staticConfigs')
             ),
-            'configs' => ProductConfigResource::collection(
+            'configs' => productConfigResource::collection(
                 $this->whenLoaded('configs')
             ),
-            'variants' => ProductVariantResource::collection(
+            'variants' => productVariantResource::collection(
                 $this->whenLoaded('variants')
             ),
         ];
