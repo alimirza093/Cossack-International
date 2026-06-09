@@ -35,6 +35,7 @@ Route::prefix('categories')->group(function () {
 
 Route::prefix('/admin/products')->group(function () {
 
+    Route::get('/', [ProductController::class, 'list_admin_products']);
     Route::post('/full', [ProductController::class, 'create_product_full']);
     Route::put('/{product_id}', [ProductController::class, 'update_product']);
     Route::delete('/{product_id}', [ProductController::class, 'delete_product']);
