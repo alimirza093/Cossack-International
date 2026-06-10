@@ -221,7 +221,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     }
     const invalidVariant = form.variants.some((v) => {
       const hasImage = v.images.some((img) => Boolean(img.file) || Boolean(img.image_url));
-      return !v.color.trim() || v.stock < 0 || !hasImage;
+      return !v.color.trim() || v.stock < 0
     });
     if (invalidVariant) {
       setToast({
@@ -310,9 +310,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         </section>
 
         <section>
-          <h2 className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-3">Static Configs</h2>
+          <h2 className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-3">Product Details</h2>
           {form.static_configs.length === 0 ? (
-            <p className="text-sm text-zinc-500 mb-3">No static configs.</p>
+            <p className="text-sm text-zinc-500 mb-3">No product details</p>
           ) : (
             <div className="space-y-3">
               {form.static_configs.map((cfg, idx) => (
@@ -351,23 +351,23 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             onClick={addStatic}
             className="mt-3 p-2 rounded-sm bg-[#000000] text-[12px] font-black uppercase tracking-widest text-white hover:text-[#39FF14] transition-colors"
           >
-            + Add Static Config
+            + Add Detail
           </button>
         </section>
 
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Dynamic Configs</h2>
+            <h2 className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Available Options</h2>
             <button
               type="button"
               onClick={addDynamic}
               className="text-[12px] p-2 rounded-sm bg-[#000000] font-black uppercase tracking-widest text-white hover:text-[#39FF14] transition-colors"
             >
-              + Add Config
+              + Add Option Group
             </button>
           </div>
           {form.dynamic_configs.length === 0 ? (
-            <p className="text-sm text-zinc-500">No dynamic configs.</p>
+            <p className="text-sm text-zinc-500">No option group</p>
           ) : (
             <div className="space-y-5">
               {form.dynamic_configs.map((cfg, cfgIdx) => (
@@ -375,7 +375,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
                     <div>
                       <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
-                        Config Name
+                        Option Name
                       </label>
                       <input
                         ref={
@@ -389,7 +389,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     <div className="flex items-center gap-3">
                       <div className="flex-1">
                         <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
-                          Type
+                          Option Type
                         </label>
                         <select
                           value={cfg.type}
@@ -412,20 +412,20 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   </div>
                   <div className="mt-4 space-y-3">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Options</h3>
+                      <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Choices</h3>
                       <button
                         type="button"
                         onClick={() => addDynamicOption(cfgIdx)}
                         className="text-[12px] p-2 rounded-sm bg-[#000000] font-black uppercase tracking-widest text-white hover:text-[#39FF14] transition-colors"
                       >
-                        + Add Option
+                        + Add Choice
                       </button>
                     </div>
                     {cfg.options.map((opt, optIdx) => (
                       <div key={`opt-${cfgIdx}-${optIdx}`} className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
                         <div className="sm:col-span-2">
                           <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
-                            Value
+                            Option Value
                           </label>
                           <input
                             value={opt.value}
@@ -435,7 +435,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         </div>
                         <div>
                           <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
-                            Price Modifier
+                            Extra Price
                           </label>
                           <input
                             type="number"
@@ -465,13 +465,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Variants</h2>
+            <h2 className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Product Variants</h2>
             <button
               type="button"
               onClick={addVariant}
               className="text-[12px] p-2 rounded-sm bg-[#000000] font-black uppercase tracking-widest text-white hover:text-[#39FF14] transition-colors"
             >
-              + Add Variant
+              + Add Product Variants
             </button>
           </div>
           <div className="space-y-5">
@@ -505,7 +505,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   <div className="flex items-center gap-3">
                     <div className="flex-1">
                       <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
-                        Price Modifier
+                        Extra Price
                       </label>
                       <input
                         type="number"
@@ -542,7 +542,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     >
                       <div className="sm:col-span-2">
                         <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
-                          Image URL
+                          Image URL [Optional]
                         </label>
                         <input
                           value={img.image_url ?? ''}
@@ -558,7 +558,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       </div>
                       <div>
                         <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
-                          Upload
+                          Upload [Optional]
                         </label>
                         <input
                           type="file"

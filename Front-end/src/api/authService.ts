@@ -2,6 +2,7 @@ import type { ApiError } from '../types/api';
 import type { AuthUser, LoginInput, LoginResponse, RegisterInput, RegisterResponse } from '../types/auth';
 import { apiFetch } from './client';
 import { clearStoredToken, getStoredToken, setStoredToken } from '../lib/tokenStorage';
+import { updateProfile } from './profileService';
 
 export function getToken(): string | null {
   return getStoredToken();
@@ -58,23 +59,6 @@ export function logout(): void {
 
 export async function getCurrentUser(): Promise<AuthUser> {
   return apiFetch<AuthUser>('/auth/me', undefined, { auth: true });
-}
-
-export async function updateProfile(data: {
-  first_name: string;
-  last_name: string;
-  phone_number: string;
-  address: string;
-}): Promise<AuthUser> {
-  return apiFetch<AuthUser>(
-    '/users/profile',
-    {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    },
-    { auth: true }
-  );
 }
 
 export function mapAuthError(err: unknown): ApiError {

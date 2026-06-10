@@ -51,11 +51,27 @@ export async function apiFetch<T>(
   if (!response.ok) {
     let message = `Request failed (${response.status})`;
     try {
-      const body = (await response.json()) as { detail?: string | { msg?: string }[] };
+      const body = (await response.json()) as {
+        detail?: string | { msg?: string }[];
+        message?: string;
+        errors?: Record<string, string | string[]>;
+      };
       if (typeof body.detail === 'string') {
         message = body.detail;
       } else if (Array.isArray(body.detail) && body.detail[0]?.msg) {
         message = body.detail[0].msg;
+      } else if (body.errors && typeof body.errors === 'object') {
+        const firstErrorKey = Object.keys(body.errors)[0];
+        if (firstErrorKey) {
+          const firstErrorVal = body.errors[firstErrorKey];
+          if (Array.isArray(firstErrorVal) && firstErrorVal[0]) {
+            message = firstErrorVal[0];
+          } else if (typeof firstErrorVal === 'string') {
+            message = firstErrorVal;
+          }
+        }
+      } else if (typeof body.message === 'string') {
+        message = body.message;
       }
     } catch {
       /* use default message */

@@ -7,14 +7,14 @@ export const heroSlides = [
     title: 'Premium Hosiery',
     subtitle: 'Precision-knit hosiery engineered for comfort, durability, and consistent fit at scale.',
     cta: 'Shop Hosiery',
-    ctaLink: '/products',
+    ctaLink: '/products?category=019ead1d-8fad-713e-a58e-04df1dd0e701',
   },
   {
     image: HERO_IMAGES.puffer1,
     title: 'Technical Outerwear',
     subtitle: 'Insulated puffer jackets built with industrial-grade materials and refined construction.',
     cta: 'Shop Jackets',
-    ctaLink: '/products',
+    ctaLink: '/products?category=019ead1d-f149-71b8-b478-79a642e3f7cb',
   },
   {
     image: HERO_IMAGES.hozri3,

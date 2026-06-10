@@ -9,13 +9,14 @@ export interface ProfileUpdateInput {
   address: string;
 }
 
-export function getProfile(): Promise<AuthUser> {
-  return apiFetch<AuthUser>('/users/profile', undefined, { auth: true });
+export async function getProfile(): Promise<AuthUser> {
+  const response = await apiFetch<{ data: AuthUser }>('/profile', undefined, { auth: true });
+  return response.data;
 }
 
-export function updateProfile(input: ProfileUpdateInput): Promise<AuthUser> {
-  return apiFetch<AuthUser>(
-    '/users/profile',
+export async function updateProfile(input: ProfileUpdateInput): Promise<AuthUser> {
+  const response = await apiFetch<{ data: AuthUser }>(
+    '/profile',
     {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -23,6 +24,7 @@ export function updateProfile(input: ProfileUpdateInput): Promise<AuthUser> {
     },
     { auth: true }
   );
+  return response.data;
 }
 
 export function getProfileErrorMessage(err: unknown): string {

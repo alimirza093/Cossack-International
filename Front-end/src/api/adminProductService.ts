@@ -124,6 +124,7 @@ function toProductUpdatePayload(input: AdminProductFormInput): unknown {
       id: variant.id,
       color: variant.color,
       stock: variant.stock,
+      price_modifier: variant.price_modifier,
       images: mapVariantImages(variant),
     })),
   };
@@ -141,7 +142,7 @@ function toMultipartBody(input: AdminProductFormInput, mode: 'create' | 'update'
   for (const variant of input.variants) {
     for (const img of variant.images) {
       if (img.file) {
-        form.append('variant_images', img.file);
+        form.append('variant_images[]', img.file);
       }
     }
   }
@@ -155,7 +156,12 @@ function buildRequestInit(
   mode: 'create' | 'update'
 ): RequestInit {
   if (hasAnyUpload(input)) {
-    return { method, body: toMultipartBody(input, mode) };
+    const body = toMultipartBody(input, mode);
+    if (method === 'PUT') {
+      body.append('_method', 'PUT');
+      return { method: 'POST', body };
+    }
+    return { method, body };
   }
   const body =
     mode === 'create'

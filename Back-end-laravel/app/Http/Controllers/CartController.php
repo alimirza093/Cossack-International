@@ -69,7 +69,7 @@ class CartController extends Controller
             $selectedOptionsJson = [];
             $largestConfigModifier = 0.00;
 
-            foreach ($request->selected_options as $selOpt) {
+            foreach (($request->selected_options ?? []) as $selOpt) {
                 $config = ProductConfig::where('id', $selOpt['config_id'])->where('product_id', $product->id)->first();
 
                 if (!$config) {

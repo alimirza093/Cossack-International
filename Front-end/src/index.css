@@ -14,6 +14,11 @@ body {
 /* Hero Swiper */
 .hero-swiper .swiper-slide {
   height: 100%;
+  pointer-events: none;
+}
+
+.hero-swiper .swiper-slide-active {
+  pointer-events: auto;
 }
 
 .hero-swiper .swiper-pagination-bullet {
@@ -72,7 +77,7 @@ body {
     @apply bg-[#39FF14] text-black px-8 py-3 font-black rounded-sm
     shadow-[0_0_20px_rgba(57,255,20,0.3)]
     hover:scale-105 hover:shadow-[0_0_30px_rgba(57,255,20,0.6)]
-    active:scale-95 transition-all duration-300 uppercase italic;
+    active:scale-95 transition-all duration-300 uppercase italic cursor-pointer;
   }
 
   .section-accent {

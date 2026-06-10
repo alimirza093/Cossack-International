@@ -13,7 +13,6 @@ import { useRelatedProducts } from '../hooks/useRelatedProducts';
 import type { ProductVariant } from '../types/api';
 import { parsePrice } from '../utils/product';
 import {
-  findVariantByColor,
   getInitialSelections,
   getVariantImages,
 } from '../utils/productDetail';
@@ -116,10 +115,8 @@ const ProductDetail: React.FC = () => {
     setQuantity((q) => clampQuantity(q));
   }, [stock, clampQuantity]);
 
-  const handleColorSelect = (color: string) => {
-    if (!product) return;
-    const variant = findVariantByColor(product, color);
-    if (variant) setSelectedVariant(variant);
+  const handleColorSelect = (variant: ProductVariant) => {
+    setSelectedVariant(variant);
   };
 
   const handleConfigSelect = (configId: string, optionId: string) => {
@@ -312,12 +309,12 @@ const ProductDetail: React.FC = () => {
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {uniqueColors.map((v) => {
-                        const isActive = selectedVariant?.id === v.id;
+                        const isActive = selectedVariant?.color.trim().toLowerCase() === v.color.trim().toLowerCase();
                         return (
                           <button
                             key={v.id}
                             type="button"
-                            onClick={() => handleColorSelect(v.color)}
+                            onClick={() => handleColorSelect(v)}
                             className={`flex items-center gap-2 px-3 py-2 rounded-sm border text-[10px] font-black uppercase tracking-wider transition-all ${
                               isActive
                                 ? 'border-[#39FF14] bg-[#39FF14]/10 text-[#0B0B0B]'

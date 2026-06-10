@@ -42,8 +42,8 @@ export interface ClearCartResponse {
   grand_total: string | number;
 }
 
-export function getCart(): Promise<Cart> {
-  return apiFetch<Cart>('/cart/', undefined, { auth: true });
+export function getCart(): Promise<{ data: Cart }> {
+  return apiFetch<{ data: Cart }>('/cart/', undefined, { auth: true });
 }
 
 export function addToCart(payload: AddToCartPayload): Promise<AddToCartResponse> {

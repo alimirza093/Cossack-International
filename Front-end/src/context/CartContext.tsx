@@ -55,7 +55,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsCartLoading(true);
     try {
       const data = await getCart();
-      setCart(data);
+      setCart(data?.data);
     } finally {
       setIsCartLoading(false);
     }

@@ -163,19 +163,19 @@ class ProductController extends Controller
 
                 if (isset($vData['images']) && is_array($vData['images'])) {
                     foreach ($vData['images'] as $imgData) {
-                        if (isset($variantFiles[$fileIteratorIndex])) {
-                            $currentFile = $variantFiles[$fileIteratorIndex];
-                            
-                            $uploadedUrl = $this->uploadImage($currentFile);
+                        $imageUrl = $imgData['image_url'] ?? null;
 
-                            if ($uploadedUrl) {
-                                ProductImage::create([
-                                    'variant_id'  => $variant->id,
-                                    'image_url'   => $uploadedUrl,
-                                    'is_primary'  => $imgData['is_primary'] ?? false
-                                ]);
-                            }
+                        if (!$imageUrl && isset($variantFiles[$fileIteratorIndex])) {
+                            $imageUrl = $this->uploadImage($variantFiles[$fileIteratorIndex]);
                             $fileIteratorIndex++;
+                        }
+
+                        if ($imageUrl) {
+                            ProductImage::create([
+                                'variant_id'  => $variant->id,
+                                'image_url'   => $imageUrl,
+                                'is_primary'  => $imgData['is_primary'] ?? false
+                            ]);
                         }
                     }
                 }
