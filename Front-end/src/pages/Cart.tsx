@@ -103,6 +103,22 @@ const Cart: React.FC = () => {
     setSelectedItemIds([]);
   };
 
+  const [isDeletingSelected, setIsDeletingSelected] = useState(false);
+
+  const handleDeleteSelected = async () => {
+    if (selectedItemIds.length === 0 || isDeletingSelected) return;
+    setIsDeletingSelected(true);
+    try {
+      await Promise.all(selectedItemIds.map((id) => removeCartItem(id)));
+      setToast({ message: 'Selected items removed.', type: 'success' });
+      setSelectedItemIds([]);
+    } catch (err) {
+      setToast({ message: getCartErrorMessage(err), type: 'error' });
+    } finally {
+      setIsDeletingSelected(false);
+    }
+  };
+
   const handleCheckout = () => {
     if (selectedItemIds.length === 0) {
       setToast({ message: 'Please select at least one cart item.', type: 'error' });
@@ -121,13 +137,25 @@ const Cart: React.FC = () => {
               Your Cart
             </h1>
             {items.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setConfirmClearOpen(true)}
-                className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-red-500 transition-colors"
-              >
-                Clear Cart
-              </button>
+              <div className="flex items-center gap-4">
+                {selectedItemIds.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleDeleteSelected}
+                    disabled={isDeletingSelected}
+                    className="text-[10px] font-black uppercase tracking-widest text-red-500 hover:text-red-700 transition-colors disabled:opacity-50"
+                  >
+                    {isDeletingSelected ? 'Deleting...' : 'Delete Selected'}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setConfirmClearOpen(true)}
+                  className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-red-500 transition-colors"
+                >
+                  Clear Cart
+                </button>
+              </div>
             )}
           </div>
 
@@ -146,7 +174,7 @@ const Cart: React.FC = () => {
                 Your cart is empty
               </h2>
               <p className="text-sm text-zinc-500 mb-7">Looks like you have not added anything yet.</p>
-              <Link to="/" className="btn-primary inline-block text-sm">
+              <Link to="/products" className="btn-primary inline-block text-sm">
                 Continue Shopping
               </Link>
             </div>

@@ -23,7 +23,7 @@ export function createCategory(input: CategoryCreateInput): Promise<{ message: s
 
 export function updateCategory(categoryId: string, input: CategoryCreateInput): Promise<{ message: string; category: Category }> {
   return apiFetch<{ message: string; category: Category }>(
-    `/categories/update-category/${categoryId}`,
+    `/categories/${categoryId}`,
     {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -34,7 +34,7 @@ export function updateCategory(categoryId: string, input: CategoryCreateInput): 
 }
 
 export function deleteCategory(categoryId: string): Promise<{ message: string }> {
-  return apiFetch<{ message: string }>(`/categories/delete-category/${categoryId}`, { method: 'DELETE' }, { auth: true });
+  return apiFetch<{ message: string }>(`/categories/${categoryId}`, { method: 'DELETE' }, { auth: true });
 }
 
 export function getAdminCategoryErrorMessage(err: unknown): string {

@@ -6,9 +6,9 @@ export interface CreateOrderPayload {
   delivery_address: string;
 }
 
-export function createOrder(cartItemIds: string[], deliveryAddress: string): Promise<Order> {
-  return apiFetch<Order>(
-    '/order/',
+export async function createOrder(cartItemIds: string[], deliveryAddress: string): Promise<Order> {
+  const response = await apiFetch<{ data: Order }>(
+    '/order',
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -19,14 +19,17 @@ export function createOrder(cartItemIds: string[], deliveryAddress: string): Pro
     },
     { auth: true }
   );
+  return response.data;
 }
 
-export function getMyOrders(): Promise<Order[]> {
-  return apiFetch<Order[]>('/order/my', undefined, { auth: true });
+export async function getMyOrders(): Promise<Order[]> {
+  const response = await apiFetch<{ data: Order[] }>('/order/my', undefined, { auth: true });
+  return response.data;
 }
 
-export function getOrderById(orderId: string): Promise<Order> {
-  return apiFetch<Order>(`/order/${orderId}`, undefined, { auth: true });
+export async function getOrderById(orderId: string): Promise<Order> {
+  const response = await apiFetch<{ data: Order }>(`/order/${orderId}`, undefined, { auth: true });
+  return response.data;
 }
 
 export function getOrderErrorMessage(err: unknown): string {

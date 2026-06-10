@@ -338,7 +338,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ slides }) => (
       effect="fade"
       fadeEffect={{ crossFade: true }}
       autoplay={{ delay: 4500, disableOnInteraction: false }}
-      loop
+      loop={false}
       speed={800}
       pagination={{ clickable: true }}
       className="h-[75vh] min-h-[520px] max-h-[800px] w-full"

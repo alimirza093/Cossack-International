@@ -56,8 +56,8 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware(['auth:sanctum', 'admin.reject'])->prefix('cart')->controller(CartController::class)->group(function () {
     Route::get('/', 'getCart');
     Route::post('/add', 'addToCart');
-    Route::delete('/{cartItemId}', 'delCart');
     Route::delete('/clear', 'clearCart');
+    Route::delete('/{cartItemId}', 'delCart');
     Route::patch('/item/{cartItemId}/quantity', 'updateQuantity');
 });
 

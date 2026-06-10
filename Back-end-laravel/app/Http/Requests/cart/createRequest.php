@@ -25,9 +25,9 @@ class createRequest extends FormRequest
         return [
             'product_id' => ['required', 'uuid'],
             'variant_id' => ['required', 'uuid'],
-            'selected_options' => ['required', 'array'],
-            'selected_options.*.config_id' => ['required', 'uuid'],
-            'selected_options.*.option_id' => ['required', 'uuid'],
+            'selected_options' => ['nullable', 'array'],
+            'selected_options.*.config_id' => ['uuid'],
+            'selected_options.*.option_id' => ['uuid'],
             'quantity' => ['required', 'integer', 'min:1']
         ];
     }
