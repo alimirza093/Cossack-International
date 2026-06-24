@@ -31,6 +31,7 @@ class CartItem extends Model
         'final_price' => 'decimal:2',
         'item_total' => 'decimal:2',
         'quantity' => 'integer',
+        'created_at' => 'datetime',
     ];
 
     public function cart()

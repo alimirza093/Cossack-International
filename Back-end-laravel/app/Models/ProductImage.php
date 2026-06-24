@@ -18,6 +18,7 @@ class ProductImage extends Model
 
     protected $casts = [
         'is_primary' => 'boolean',
+        'created_at' => 'datetime',
     ];
 
     public function variant()

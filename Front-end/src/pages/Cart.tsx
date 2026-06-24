@@ -277,13 +277,13 @@ const Cart: React.FC = () => {
                             Unit Price
                           </p>
                           <p className="font-black text-[#0B0B0B] text-sm mb-3">
-                            Rs. {toNumber(item.final_price).toFixed(2)}
+                            ${toNumber(item.final_price).toFixed(2)}
                           </p>
                           <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">
                             Item Total
                           </p>
                           <p className="font-black text-[#0B0B0B] text-base">
-                            Rs. {toNumber(item.item_total).toFixed(2)}
+                            ${toNumber(item.item_total).toFixed(2)}
                           </p>
                         </div>
                       </div>
@@ -301,11 +301,11 @@ const Cart: React.FC = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-zinc-500">Subtotal</span>
-                    <span className="font-bold text-[#0B0B0B]">Rs. {subtotal.toFixed(2)}</span>
+                    <span className="font-bold text-[#0B0B0B]">${subtotal.toFixed(2)}</span>
                   </div>
                   <div className="pt-3 border-t border-zinc-100 flex items-center justify-between">
                     <span className="font-black text-xs uppercase tracking-widest text-[#0B0B0B]">Grand Total</span>
-                    <span className="font-black text-xl text-[#0B0B0B]">Rs. {cartTotal.toFixed(2)}</span>
+                    <span className="font-black text-xl text-[#0B0B0B]">${cartTotal.toFixed(2)}</span>
                   </div>
                 </div>
                 <div className="mt-6 p-3 bg-zinc-50 border border-zinc-100 rounded-sm space-y-1.5">
@@ -315,7 +315,7 @@ const Cart: React.FC = () => {
                   </div>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-zinc-500">Selected Total</span>
-                    <span className="font-black text-[#0B0B0B]">Rs. {selectedSubtotal.toFixed(2)}</span>
+                    <span className="font-black text-[#0B0B0B]">${selectedSubtotal.toFixed(2)}</span>
                   </div>
                 </div>
                 <button

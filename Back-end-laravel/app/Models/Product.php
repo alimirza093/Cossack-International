@@ -13,7 +13,6 @@ class Product extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     public $timestamps = true;
-    const UPDATED_AT = null;
 
     protected $fillable = [
         'id',
@@ -31,6 +30,8 @@ class Product extends Model
     protected $casts = [
         'base_price' => 'decimal:2',
         'is_deleted' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function category()

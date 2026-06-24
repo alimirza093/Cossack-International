@@ -66,7 +66,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose }) => 
               {product.name}
             </h2>
             <p className="text-[#0B0B0B] font-black text-2xl mb-4">
-              Rs. {parsePrice(product.base_price).toFixed(2)}
+              ${parsePrice(product.base_price).toFixed(2)}
             </p>
             {product.description && (
               <p className="text-zinc-500 text-sm leading-relaxed mb-4 line-clamp-4">{product.description}</p>

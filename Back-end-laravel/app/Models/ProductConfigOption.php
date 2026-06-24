@@ -18,6 +18,7 @@ class ProductConfigOption extends Model
 
     protected $casts = [
         'price_modifier' => 'decimal:2',
+        'created_at' => 'datetime',
     ];
 
     public function config()

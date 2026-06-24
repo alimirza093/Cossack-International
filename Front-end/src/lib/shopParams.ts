@@ -1,5 +1,5 @@
 /** Canonical shop route (alias `/shop` renders the same page). */
-export const SHOP_PATH = '/products';
+export const SHOP_PATH = '/shop';
 
 export function buildShopQuery(params: { category?: string; search?: string }): string {
   const qs = new URLSearchParams();

@@ -18,6 +18,7 @@ class Category extends Model
 
     protected $casts = [
         'is_deleted' => 'boolean',
+        'created_at' => 'datetime',
     ];
 
     public function products()

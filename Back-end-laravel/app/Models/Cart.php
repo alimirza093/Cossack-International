@@ -18,6 +18,7 @@ class Cart extends Model
 
     protected $casts = [
         'grand_total' => 'decimal:2',
+        'created_at' => 'datetime',
     ];
 
     public function items()

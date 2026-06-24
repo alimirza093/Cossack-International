@@ -14,7 +14,11 @@ class User extends Authenticatable
     public $incrementing = false;
     protected $keyType = 'string';
     public $timestamps = true;
-    const UPDATED_AT = null;
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
     
     protected $fillable = [
         'first_name',
