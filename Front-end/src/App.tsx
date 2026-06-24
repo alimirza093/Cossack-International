@@ -25,6 +25,7 @@ import AdminCategoriesPage from './pages/admin/AdminCategoriesPage';
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
 import AdminOrderDetailPage from './pages/admin/AdminOrderDetailPage';
 import Checkout from './pages/Checkout';
+import { WhatsAppFloatingButton } from './components/ui/WhatsAppFloatingButton';
 
 const App: React.FC = () => (
   <BrowserRouter>
@@ -33,8 +34,8 @@ const App: React.FC = () => (
       <CartProvider>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products />} />
           <Route path="/shop" element={<Products />} />
+          <Route path="/products" element={<Navigate to="/shop" replace />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/collections" element={<Navigate to="/products" replace />} />
@@ -140,6 +141,7 @@ const App: React.FC = () => (
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <WhatsAppFloatingButton />
       </CartProvider>
     </AuthProvider>
   </BrowserRouter>

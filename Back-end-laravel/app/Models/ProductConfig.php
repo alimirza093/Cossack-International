@@ -19,6 +19,7 @@ class ProductConfig extends Model
 
     protected $casts = [
         'type' => ConfigType::class,
+        'created_at' => 'datetime',
     ];
 
     public function product()

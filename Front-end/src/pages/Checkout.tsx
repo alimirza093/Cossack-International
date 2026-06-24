@@ -175,7 +175,7 @@ const Checkout: React.FC = () => {
                         <span className="text-zinc-400 font-normal">× {item.quantity}</span>
                       </span>
                       <span className="font-bold text-[#0B0B0B] shrink-0">
-                        Rs. {toNumber(item.item_total).toFixed(2)}
+                        ${toNumber(item.item_total).toFixed(2)}
                       </span>
                     </li>
                   ))}
@@ -213,7 +213,7 @@ const Checkout: React.FC = () => {
                   Total
                 </span>
                 <span className="font-black text-xl text-[#0B0B0B]">
-                  Rs. {orderTotal.toFixed(2)}
+                  ${orderTotal.toFixed(2)}
                 </span>
               </div>
 

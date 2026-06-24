@@ -153,7 +153,7 @@ const AdminDashboardPage: React.FC = () => {
                                 </span>
                               </td>
                               <td className="px-4 py-4 text-sm font-black text-[#0B0B0B]">
-                                Rs. {toNumber(o.total_price).toFixed(2)}
+                                ${toNumber(o.total_price).toFixed(2)}
                               </td>
                             </tr>
                           ))}
@@ -216,7 +216,7 @@ const AdminDashboardPage: React.FC = () => {
                                   </div>
                                 </td>
                                 <td className="px-4 py-4 text-sm text-zinc-600">{p.category?.name ?? '—'}</td>
-                                <td className="px-4 py-4 text-sm font-black text-[#0B0B0B]">Rs. {formatPrice(p.base_price)}</td>
+                                <td className="px-4 py-4 text-sm font-black text-[#0B0B0B]">{formatPrice(p.base_price)}</td>
                               </tr>
                             );
                           })}

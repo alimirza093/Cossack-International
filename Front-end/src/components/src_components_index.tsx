@@ -8,6 +8,7 @@ import { SiteLogo } from './ui/SiteLogo';
 import { MediaFrame } from './ui/MediaFrame';
 import { ProductSearchInput } from './ui/ProductSearchInput';
 import { shopUrl, SHOP_PATH } from '../lib/shopParams';
+import { FaPinterest, FaFacebook, FaInstagram } from 'react-icons/fa';
 
 const NAV_LINKS: Array<{ label: string; to: string }> = [
   { label: 'Shop', to: '/products' },
@@ -327,7 +328,7 @@ interface HeroSliderProps {
     title: string;
     subtitle: string;
     cta: string;
-    ctaLink?: string;
+    ctaLink: string;
   }>;
 }
 
@@ -367,15 +368,9 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ slides }) => (
               <p className="text-zinc-400 text-sm sm:text-base mb-10 max-w-lg font-medium leading-relaxed">
                 {slide.subtitle}
               </p>
-              {slide.ctaLink ? (
-                <Link to={slide.ctaLink} className="btn-primary w-fit text-sm sm:text-base">
-                  {slide.cta}
-                </Link>
-              ) : (
-                <Link to="/products" className="btn-primary w-fit text-sm sm:text-base">
-                  {slide.cta}
-                </Link>
-              )}
+              <Link to={slide.ctaLink} className="btn-primary w-fit text-sm sm:text-base">
+                {slide.cta}
+              </Link>
             </div>
           </div>
         </SwiperSlide>
@@ -496,7 +491,7 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({
           <h3 className="text-sm font-bold text-[#0B0B0B] leading-snug mb-1 line-clamp-2 min-h-[2.5rem]">
             {name}
           </h3>
-          <p className="text-[#0B0B0B] font-black text-lg mb-2">Rs. {price.toFixed(2)}</p>
+          <p className="text-[#0B0B0B] font-black text-lg mb-2">${price.toFixed(2)}</p>
 
           {(visibleColors.length > 0 || configOptionsCount > 0) && (
             <div className="flex flex-wrap items-center gap-2 min-h-[1.25rem]">
@@ -554,6 +549,24 @@ export const WhyUsCard: React.FC<WhyUsCardProps> = ({ icon, title, desc }) => (
   </div>
 );
 
+const SOCIAL_LINKS = [
+  {
+    label: 'Instagram',
+    href: 'https://www.instagram.com/cossack_international?igsh=YzJubGpnMzdyZW13',
+    icon: <FaInstagram className="w-4 h-4" />,
+  },
+  {
+    label: 'Facebook',
+    href: 'https://www.facebook.com/share/1BXezEwZPt/',
+    icon: <FaFacebook className="w-4 h-4" />,
+  },
+  {
+    label: 'Pinterest',
+    href: 'https://pin.it/4MeRmwbfw',
+    icon: <FaPinterest className="w-4 h-4" />,
+  },
+];
+
 // --- Footer ---
 const FOOTER_COMPANY: Array<{ label: string; to: string }> = [
   { label: 'About Us', to: '/about' },
@@ -591,20 +604,39 @@ export const Footer: React.FC<FooterProps> = ({ categories = [] }) => {
             Get in Touch
           </Link>
           <div className="pt-2 flex flex-col gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-500">
-            <a 
-            href="tel:+923084639171" 
-            className="inline-flex items-center gap-2 hover:text-[#39FF14] transition-colors"
+            <a
+              href="tel:+923084639171"
+              className="inline-flex items-center gap-2 hover:text-[#39FF14] transition-colors"
             >
-            <span className="material-icons-round text-base">phone</span>
-            +92 308 4639171
+              <span className="material-icons-round text-base">phone</span>
+              +92 308 4639171
             </a>
-            <a 
-            href="tel:+923228702004" 
-            className="inline-flex items-center gap-2 hover:text-[#39FF14] transition-colors"
+            <a
+              href="tel:+923228702004"
+              className="inline-flex items-center gap-2 hover:text-[#39FF14] transition-colors"
             >
-            <span className="material-icons-round text-base">phone</span>
-            +92 322 8702004
+              <span className="material-icons-round text-base">phone</span>
+              +92 322 8702004
             </a>
+          </div>
+          <div className="pt-6">
+            <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-3">
+              Follow Us
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              {SOCIAL_LINKS.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Cossack International ${item.label}`}
+                  className="w-10 h-10 rounded-md border border-zinc-800 bg-[#0B0B0B] flex items-center justify-center text-zinc-300 hover:text-[#39FF14] hover:border-[#39FF14] transition-colors duration-200"
+                >
+                  {item.icon}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
 

@@ -145,7 +145,7 @@ const AdminOrdersPage: React.FC = () => {
                             {ORDER_STATUS_LABEL[o.status]}
                           </span>
                         </td>
-                        <td className="px-4 py-4 text-sm font-black text-[#0B0B0B]">Rs. {formatPrice(o.total_price)}</td>
+                        <td className="px-4 py-4 text-sm font-black text-[#0B0B0B]">{formatPrice(o.total_price)}</td>
                         <td className="px-4 py-4 text-sm text-zinc-600">
                           {new Date(o.created_at).toLocaleDateString()}
                         </td>

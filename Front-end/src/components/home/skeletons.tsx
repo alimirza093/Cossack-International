@@ -27,9 +27,19 @@ export const ProductGridSkeleton: React.FC<{ count?: number }> = ({ count = 4 })
 );
 
 export const CategoryGridSkeleton: React.FC<{ count?: number }> = ({ count = 3 }) => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-    {Array.from({ length: count }).map((_, i) => (
-      <CategoryCardSkeleton key={i} />
-    ))}
-  </div>
+  <>
+    <div className="flex gap-3 overflow-x-auto pb-1 -mx-4 px-4 sm:hidden">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="shrink-0 w-24 flex flex-col items-center gap-2 animate-pulse">
+          <div className="w-20 h-20 rounded-full bg-zinc-200 border border-zinc-100" />
+          <div className="h-3 w-16 bg-zinc-200 rounded" />
+        </div>
+      ))}
+    </div>
+    <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+      {Array.from({ length: count }).map((_, i) => (
+        <CategoryCardSkeleton key={i} />
+      ))}
+    </div>
+  </>
 );

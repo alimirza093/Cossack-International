@@ -26,6 +26,7 @@ class Order extends Model
 
     protected $casts = [
         'total_price' => 'decimal:2',
+        'created_at' => 'datetime',
     ];
 
     public function items()

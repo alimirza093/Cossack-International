@@ -13,7 +13,6 @@ class ProductVariant extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     public $timestamps = true;
-    const UPDATED_AT = null;
     
     protected $fillable = [
         'id',
@@ -28,6 +27,8 @@ class ProductVariant extends Model
     protected $casts = [
         'stock' => 'integer',
         'price_modifier' => 'decimal:2',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function product()

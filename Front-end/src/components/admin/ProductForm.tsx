@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Toast, { type ToastType } from '../ui/Toast';
 import type {
   AdminConfigType,
@@ -27,14 +27,45 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 }) => {
   const [form, setForm] = useState<AdminProductFormInput>(initialForm);
   const [toast, setToast] = useState<ToastState>(null);
+  const [pendingFocus, setPendingFocus] = useState<
+    | { section: 'static'; index: number }
+    | { section: 'dynamic'; index: number }
+    | { section: 'dynamicOption'; configIndex: number; optionIndex: number }
+    | { section: 'variant'; index: number }
+    | { section: 'variantImage'; variantIndex: number; imageIndex: number }
+    | null
+  >(null);
 
   const nameRef = useRef<HTMLInputElement>(null);
-  const newStaticRef = useRef<HTMLInputElement>(null);
-  const newDynamicRef = useRef<HTMLInputElement>(null);
-  const newVariantRef = useRef<HTMLInputElement>(null);
-  const staticMounted = useRef(false);
-  const configMounted = useRef(false);
-  const variantMounted = useRef(false);
+  const staticRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const dynamicNameRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const dynamicOptionValueRefs = useRef<Record<number, Array<HTMLInputElement | null>>>({});
+  const variantColorRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const variantImageUrlRefs = useRef<Record<number, Array<HTMLInputElement | null>>>({});
+
+  const focusPendingField = useCallback(() => {
+    if (!pendingFocus) return;
+
+    let target: HTMLInputElement | null = null;
+
+    if (pendingFocus.section === 'static') {
+      target = staticRefs.current[pendingFocus.index] ?? null;
+    } else if (pendingFocus.section === 'dynamic') {
+      target = dynamicNameRefs.current[pendingFocus.index] ?? null;
+    } else if (pendingFocus.section === 'dynamicOption') {
+      target = dynamicOptionValueRefs.current[pendingFocus.configIndex]?.[pendingFocus.optionIndex] ?? null;
+    } else if (pendingFocus.section === 'variant') {
+      target = variantColorRefs.current[pendingFocus.index] ?? null;
+    } else if (pendingFocus.section === 'variantImage') {
+      target = variantImageUrlRefs.current[pendingFocus.variantIndex]?.[pendingFocus.imageIndex] ?? null;
+    }
+
+    if (!target) return;
+
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    target.focus({ preventScroll: true });
+    setPendingFocus(null);
+  }, [pendingFocus]);
 
   useEffect(() => {
     setForm(initialForm);
@@ -45,46 +76,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   }, [initialForm]);
 
   useEffect(() => {
-
-    if (!staticMounted.current){
-        staticMounted.current = true;
-        return;
-    }
-
-    newStaticRef.current?.focus();
-    newStaticRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-    });
-  }, [form.static_configs.length])
-
-  useEffect(() => {
-
-    if (!configMounted.current){
-        configMounted.current = true;
-        return;
-    }
-
-    newDynamicRef.current?.focus();
-    newDynamicRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-    });
-  }, [form.dynamic_configs.length])
-
-  useEffect(() => {
-
-    if (!variantMounted.current){
-        variantMounted.current = true;
-        return;
-    }
-
-    newVariantRef.current?.focus();
-    newVariantRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-    });
-  }, [form.variants.length])
+    focusPendingField();
+  }, [focusPendingField]);
 
   const updateStatic = (idx: number, patch: Partial<{ key: string; value: string }>) => {
     setForm((prev) => {
@@ -95,6 +88,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   };
 
   const addStatic = () => {
+    setPendingFocus({ section: 'static', index: form.static_configs.length });
     setForm((prev) => ({ ...prev, static_configs: [...prev.static_configs, { key: '', value: '' }] }));
   };
 
@@ -111,6 +105,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   };
 
   const addDynamic = () => {
+    setPendingFocus({ section: 'dynamic', index: form.dynamic_configs.length });
     setForm((prev) => ({
       ...prev,
       dynamic_configs: [
@@ -140,6 +135,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   };
 
   const addDynamicOption = (cfgIdx: number) => {
+    setPendingFocus({
+      section: 'dynamicOption',
+      configIndex: cfgIdx,
+      optionIndex: form.dynamic_configs[cfgIdx].options.length,
+    });
     setForm((prev) => {
       const next = [...prev.dynamic_configs];
       next[cfgIdx] = { ...next[cfgIdx], options: [...next[cfgIdx].options, { value: '', price_modifier: 0 }] };
@@ -171,6 +171,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   };
 
   const addVariant = () => {
+    setPendingFocus({ section: 'variant', index: form.variants.length });
     setForm((prev) => ({
       ...prev,
       variants: [
@@ -204,6 +205,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   };
 
   const addVariantImage = (vIdx: number) => {
+    setPendingFocus({
+      section: 'variantImage',
+      variantIndex: vIdx,
+      imageIndex: form.variants[vIdx].images.length,
+    });
     setForm((prev) => {
       const next = [...prev.variants];
       next[vIdx] = {
@@ -220,7 +226,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       return;
     }
     const invalidVariant = form.variants.some((v) => {
-      const hasImage = v.images.some((img) => Boolean(img.file) || Boolean(img.image_url));
+      // const hasImage = v.images.some((img) => Boolean(img.file) || Boolean(img.image_url));
       return !v.color.trim() || v.stock < 0
     });
     if (invalidVariant) {
@@ -318,9 +324,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               {form.static_configs.map((cfg, idx) => (
                 <div key={`static-${idx}`} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <input
-                    ref={
-                        idx === form.static_configs.length - 1 ? newStaticRef : null
-                    }
+                    ref={(el) => {
+                      staticRefs.current[idx] = el;
+                    }}
                     value={cfg.key}
                     onChange={(e) => updateStatic(idx, { key: e.target.value })}
                     placeholder="Key"
@@ -378,9 +384,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         Option Name
                       </label>
                       <input
-                        ref={
-                          cfgIdx === form.dynamic_configs.length - 1 ? newDynamicRef : null
-                        }
+                        ref={(el) => {
+                          dynamicNameRefs.current[cfgIdx] = el;
+                        }}
                         value={cfg.name}
                         onChange={(e) => updateDynamic(cfgIdx, { name: e.target.value })}
                         className="w-full px-4 py-3.5 bg-white border border-zinc-200 rounded-sm text-sm"
@@ -428,6 +434,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                             Option Value
                           </label>
                           <input
+                            ref={(el) => {
+                              if (!dynamicOptionValueRefs.current[cfgIdx]) {
+                                dynamicOptionValueRefs.current[cfgIdx] = [];
+                              }
+                              dynamicOptionValueRefs.current[cfgIdx][optIdx] = el;
+                            }}
                             value={opt.value}
                             onChange={(e) => updateDynamicOption(cfgIdx, optIdx, { value: e.target.value })}
                             className="w-full px-4 py-3.5 bg-white border border-zinc-200 rounded-sm text-sm"
@@ -483,9 +495,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       Color
                     </label>
                     <input
-                      ref={
-                        vIdx === form.variants.length - 1 ? newVariantRef : null
-                      }
+                      ref={(el) => {
+                        variantColorRefs.current[vIdx] = el;
+                      }}
                       value={variant.color}
                       onChange={(e) => updateVariant(vIdx, { color: e.target.value })}
                       className="w-full px-4 py-3.5 bg-white border border-zinc-200 rounded-sm text-sm"
@@ -545,6 +557,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           Image URL [Optional]
                         </label>
                         <input
+                            ref={(el) => {
+                              if (!variantImageUrlRefs.current[vIdx]) {
+                                variantImageUrlRefs.current[vIdx] = [];
+                              }
+                              variantImageUrlRefs.current[vIdx][imgIdx] = el;
+                            }}
                           value={img.image_url ?? ''}
                           onChange={(e) =>
                             updateVariantImage(vIdx, imgIdx, {

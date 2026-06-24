@@ -1,4 +1,5 @@
 import { HERO_IMAGES } from '../lib/siteAssets';
+import { shopUrl } from '../lib/shopParams';
 
 /** Static marketing content for hero — not catalog data */
 export const heroSlides = [
@@ -7,35 +8,35 @@ export const heroSlides = [
     title: 'Premium Hosiery',
     subtitle: 'Precision-knit hosiery engineered for comfort, durability, and consistent fit at scale.',
     cta: 'Shop Hosiery',
-    ctaLink: '/products?category=019ead1d-8fad-713e-a58e-04df1dd0e701',
+    ctaLink: shopUrl({ category: '019ead1d-8fad-713e-a58e-04df1dd0e701' }),
   },
   {
     image: HERO_IMAGES.puffer1,
     title: 'Technical Outerwear',
     subtitle: 'Insulated puffer jackets built with industrial-grade materials and refined construction.',
     cta: 'Shop Jackets',
-    ctaLink: '/products?category=019ead1d-f149-71b8-b478-79a642e3f7cb',
+    ctaLink: shopUrl({ category: '019ead1d-f149-71b8-b478-79a642e3f7cb' }),
   },
   {
     image: HERO_IMAGES.hozri3,
     title: 'Cossack International',
     subtitle: 'Industrial-grade textiles built for performance, precision, and global manufacturing.',
     cta: 'View Products',
-    ctaLink: '/products',
+    ctaLink: shopUrl(),
   },
   {
     image: HERO_IMAGES.puffer2,
     title: 'Built for Performance',
     subtitle: 'From yarn selection to final inspection — every garment meets export-quality standards.',
     cta: 'Shop Now',
-    ctaLink: '/products',
+    ctaLink: shopUrl(),
   },
   {
     image: HERO_IMAGES.hozri5,
     title: 'Heritage. Reinvented.',
     subtitle: 'Decades of textile manufacturing excellence powering the next generation of apparel.',
-    cta: 'About Us',
-    ctaLink: '/about',
+    cta: 'View Products',
+    ctaLink: shopUrl(),
   },
 ];
 

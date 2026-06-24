@@ -16,6 +16,10 @@ class ProductStaticConfig extends Model
 
     protected $fillable = ['id', 'product_id', 'key', 'value', 'created_at'];
 
+    protected $casts = [
+        'created_at' => 'datetime',
+    ];
+
     public function product()
     {
         return $this->belongsTo(Product::class);

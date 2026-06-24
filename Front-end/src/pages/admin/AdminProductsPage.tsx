@@ -215,7 +215,7 @@ const AdminProductsPage: React.FC = () => {
                             <p className="text-sm font-bold text-[#0B0B0B]">{p.name}</p>
                           </td>
                           <td className="px-4 py-4 text-sm text-zinc-600">{p.category?.name ?? '—'}</td>
-                          <td className="px-4 py-4 text-sm font-black text-[#0B0B0B]">Rs. {formatPrice(p.base_price)}</td>
+                          <td className="px-4 py-4 text-sm font-black text-[#0B0B0B]">{formatPrice(p.base_price)}</td>
                           <td className="px-4 py-4 text-sm text-zinc-600">{formatAdminDate(p.created_at)}</td>
                           <td className="px-4 py-4">
                             <div className="flex flex-wrap gap-2">
