@@ -1,150 +1,243 @@
 # 🚀 Cossack International
 
-Fullstack e-commerce application with a React + Vite frontend and a FastAPI backend.
+Full-stack, premium e-commerce application featuring a modern **React + Vite** frontend and support for **two interchangeable backend implementations**: **FastAPI (Python)** or **Laravel (PHP)**. Developers can hot-swap the backend depending on their preference or system requirements, as both APIs conform to the same routing structure.
 
-## ✨ Project overview
+---
 
-- 🛍️ Frontend: `Front-end/` — React, TypeScript, Vite, Tailwind CSS.
-- ⚙️ Backend: `Back-end/app/` — FastAPI, SQLAlchemy, PostgreSQL, Alembic migrations, Cloudinary uploads.
-- 🔐 Authentication: JWT-based user login/register flows.
-- 🛒 Shopping flow: product catalog, configurable variants, cart, checkout, order history.
-- 🧑‍💼 Admin panel: product management, order management, category CRUD.
+## 👥 Developers & Contributors
 
-## 🎨 UI & animation
+This project is developed and maintained by:
+* 🧑‍💻 **Ali Mirza** — Full-stack Developer
+* 🧑‍💻 **Aamir Malik** — Full-stack Developer
 
-- Tailwind-driven UI with hover transitions, skeleton loaders, and spinner animations.
-- `animate-pulse`, `animate-spin`, and `transition-*` utility classes are used across pages.
-- Swiper carousel support is available for image galleries and sliders.
-- Responsive admin and customer pages with polished micro-interactions.
+---
 
-## Repository structure
+## 🎨 Technology Stack & Features
 
-- `Front-end/`
-  - React app entrypoint: `src/main.tsx`
-  - UI pages: `src/pages/`
-  - API layer: `src/api/`
-  - Context: `src/context/`
-- `Back-end/app/`
-  - `main.py` — FastAPI app with CORS and route registration
-  - `routes/` — auth, user, category, product, admin product, cart, order, admin order
-  - `database/db.py` — SQLAlchemy engine and session management
-  - `migrations/` — Alembic migration scripts
-  - `utils/cloudinary_config.py` — Cloudinary setup
+### 🛍️ Frontend (`Front-end/`)
+* **Framework**: React 19 (TypeScript, Vite)
+* **Styling**: Tailwind CSS for responsive and modern layouts
+* **Interactions**: Polished UI with skeleton loaders, spinner animations, hover effects, and custom transitions
+* **Media**: Image gallery slider support powered by Swiper
+* **State & Routing**: React Router DOM (v7) and React Context API for global state management
 
-## Backend setup
+### ⚙️ Backend Options
 
-1. Open a terminal and navigate to the backend folder:
+You can run **either** backend; the React frontend is compatible with both.
 
-```bash
-cd Back-end/app
+#### Option A: FastAPI Backend (`Back-end/app/`)
+* **Framework**: FastAPI (Python 3.12+)
+* **Database**: PostgreSQL with SQLAlchemy ORM
+* **Migrations**: Alembic migrations workflow
+* **Security**: JWT-based authentication using custom HS256 tokens and bcrypt-hashed passwords
+* **Media Uploads**: Cloudinary integration for product images
+
+#### Option B: Laravel Backend (`Back-end-laravel/`)
+* **Framework**: Laravel 11 (PHP 8.2+)
+* **Database**: Supported on MySQL, SQLite, or PostgreSQL
+* **Security**: Laravel Sanctum API token authentication and Laravel Hash utilities
+* **Media Uploads**: Cloudinary integration for product images
+
+---
+
+## 📂 Repository Structure
+
+```text
+├── Front-end/                  # React + Vite + TypeScript application
+│   ├── src/
+│   │   ├── api/                # API client & request services
+│   │   ├── context/            # Auth & shopping context providers
+│   │   ├── pages/              # Client & Admin dashboard pages
+│   │   └── main.tsx            # React app entry point
+│   └── vite.config.ts          # Vite configuration & dev proxy
+│
+├── Back-end/                   # FastAPI implementation
+│   └── app/
+│       ├── auth/               # JWT token generation & password utilities
+│       ├── database/           # DB engine & session local dependency
+│       ├── routes/             # FastAPI routers for admin, users, cart, and orders
+│       ├── migrations/         # Alembic migration versions
+│       └── main.py             # FastAPI server entry point
+│
+└── Back-end-laravel/           # Laravel implementation
+    ├── app/Http/Controllers/   # Controllers matching FastAPI API endpoints
+    ├── database/migrations/    # DB migrations matching the Postgres schema
+    └── routes/api.php          # Unified Laravel API routing
 ```
 
-2. Create and activate a virtual environment:
+---
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-```
+## 🚀 Getting Started
 
-3. Install dependencies:
+### 1. Frontend Setup
 
-```bash
-pip install -r requirements.txt
-```
+1. Open your terminal and navigate to the frontend directory:
+   ```bash
+   cd Front-end
+   ```
+2. Install npm dependencies:
+   ```bash
+   npm install
+   ```
+3. Copy `.env.example` to `.env` and set the target backend API base URL:
+   ```bash
+   cp .env.example .env
+   ```
+   * **For FastAPI Backend**:
+     ```env
+     VITE_API_BASE_URL=http://127.0.0.1:8000
+     ```
+   * **For Laravel Backend**:
+     ```env
+     VITE_API_BASE_URL=http://127.0.0.1:8000/api
+     ```
+4. Start the Vite development server:
+   ```bash
+   npm run dev
+   ```
+   The frontend runs on `http://localhost:5173`.
 
-4. Add a `.env` file in `Back-end/app/` with the required environment variables:
+---
 
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/cossack_db
-SECRET_KEY=some-strong-secret
-CLOUD_NAME=your_cloudinary_cloud_name
-API_KEY=your_cloudinary_api_key
-CLOUDINARY_SECRET_KEY=your_cloudinary_secret_key
-```
+### 2. Backend Setup (Choose One)
 
-5. Run the backend:
+Choose the backend implementation you want to run. Both backends share matching endpoints, authentication middleware, and database schemas.
 
-```bash
-uvicorn main:app --reload
-```
+---
 
-The API will start on `http://127.0.0.1:8000`.
+### 🐍 Choice 1: FastAPI (Python)
 
-## Frontend setup
+#### Prerequisites
+* Python 3.12+ installed
+* PostgreSQL database service running
 
-1. Open a terminal and navigate to the frontend folder:
+#### Setup Steps
+1. Navigate to the FastAPI backend directory:
+   ```bash
+   cd Back-end/app
+   ```
+2. Initialize and activate a Python virtual environment:
+   ```bash
+   python -m venv .venv
+   # On macOS/Linux:
+   source .venv/bin/activate
+   # On Windows:
+   .venv\Scripts\activate
+   ```
+3. Install package dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Create a `.env` configuration file in `Back-end/app/.env`:
+   ```env
+   DATABASE_URL=postgresql+psycopg2://user:password@localhost:5432/cossack_db
+   SECRET_KEY=cossackInternational
+   CLOUD_NAME=your_cloudinary_cloud_name
+   API_KEY=your_cloudinary_api_key
+   CLOUDINARY_SECRET_KEY=your_cloudinary_secret_key
+   ```
+5. Apply database schema migrations via Alembic:
+   ```bash
+   alembic upgrade head
+   ```
+6. Spin up the development server:
+   ```bash
+   uvicorn main:app --reload
+   ```
+   The FastAPI app will run on `http://127.0.0.1:8000`. You can visit interactive docs at `http://127.0.0.1:8000/docs`.
 
-```bash
-cd Front-end
-```
+---
 
-2. Install dependencies:
+### 🟠 Choice 2: Laravel (PHP)
 
-```bash
-npm install
-```
+#### Prerequisites
+* PHP 8.2+ installed
+* Composer package manager installed
+* MySQL, PostgreSQL, or SQLite database running
 
-3. Start the development server:
+#### Setup Steps
+1. Navigate to the Laravel backend directory:
+   ```bash
+   cd Back-end-laravel
+   ```
+2. Install Composer dependencies:
+   ```bash
+   composer install
+   ```
+3. Copy `.env.example` to create your environment configuration:
+   ```bash
+   cp .env.example .env
+   ```
+4. Generate the application cipher key:
+   ```bash
+   php artisan key:generate
+   ```
+5. Edit your `.env` file to configure your database (`DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`) and Cloudinary settings:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=cossack_db
+   DB_USERNAME=root
+   DB_PASSWORD=your_password
 
-```bash
-npm run dev
-```
+   CLOUD_NAME=your_cloudinary_cloud_name
+   API_KEY=your_cloudinary_api_key
+   CLOUDINARY_SECRET_KEY=your_cloudinary_secret_key
+   ```
+6. Run database migrations:
+   ```bash
+   php artisan migrate
+   ```
+7. Start the local server:
+   ```bash
+   php artisan serve
+   ```
+   By default, the Laravel server runs on `http://127.0.0.1:8000`. The API routes will be accessible under `/api`.
 
-The frontend will run on `http://localhost:5173` by default.
+---
 
-## Supported API routes
+## 🛠️ API Routing Architecture
 
-### Auth
-- `POST /auth/register` — register a new user
-- `POST /auth/login` — login and receive JWT
-- `GET /auth/me` — get current authenticated user
+Both backends implement the exact same routing signature, making switching between them seamless for the frontend client:
 
-### User profile
-- `GET /users/profile` — fetch current user profile
-- `PUT /users/profile` — update profile
+### 🔐 Auth Endpoints
+* `POST /auth/register` — Register a new customer
+* `POST /auth/login` — Login and receive authorization token (JWT/Sanctum)
+* `GET /auth/me` — Retrieve currently logged-in user context
 
-### Categories
-- `GET /categories/` — list categories
-- `GET /categories/categories/{category_id}` — get category details
-- `POST /categories/post-category` — create category
-- `PUT /categories/update-category/{category_id}` — update category
-- `DELETE /categories/delete-category/{category_id}` — delete category
+### 🛒 Customer Shopping Flows
+* **Products**:
+  * `GET /user/products/` — List all active products
+  * `GET /user/products/{product_id}` — Get single product details
+* **Categories**:
+  * `GET /categories/` — List all categories
+  * `GET /categories/{category_id}` — Fetch details of a category
+* **Cart**:
+  * `GET /cart/` — Fetch current user cart items
+  * `POST /cart/add` — Add item to cart (supports variants & configurations)
+  * `PATCH /cart/item/{cart_item_id}/quantity` — Update cart item quantity
+  * `DELETE /cart/{cart_item_id}` — Remove item from cart
+  * `DELETE /cart/clear` — Empty the cart
+* **Orders**:
+  * `POST /order/` — Checkout and create order from cart
+  * `GET /order/my` — Fetch current customer's order history
+  * `GET /order/{order_id}` — Fetch detailed invoice of an order
 
-### Products
-- `GET /user/products/` — list products for users
-- `GET /user/products/{product_id}` — get product details
+### 🧑‍💼 Admin Dashboard
+* **Categories**:
+  * `POST /categories/post-category` — Create a new category
+  * `PUT /categories/{category_id}` — Update category info
+  * `DELETE /categories/{category_id}` — Soft delete category
+* **Products**:
+  * `POST /admin/products/full` — Create product with variations and image configurations
+  * `GET /admin/products/` — List all products for management
+  * `GET /admin/products/{product_id}` — Fetch product for edit form
+  * `PUT /admin/products/{product_id}` — Update product details
+  * `DELETE /admin/products/{product_id}` — Archive product
+  * `POST /admin/products/{product_id}/restore` — Unarchive product
+* **Orders**:
+  * `GET /admin/order/` — Retrieve all orders across the platform
+  * `PUT /admin/order/{order_id}` — Update order status (Pending, Processing, Shipped, Delivered)
 
-### Cart
-- `GET /cart/` — get current cart
-- `POST /cart/add` — add item to cart
-- `DELETE /cart/{cart_item_id}` — remove cart item
-- `DELETE /cart/clear` — clear cart
-- `PATCH /cart/item/{cart_item_id}/quantity` — update cart item quantity
-
-### Orders
-- `POST /order/` — create an order from cart
-- `GET /order/my` — list current user orders
-- `GET /order/{order_id}` — get order details
-
-### Admin
-- `POST /admin/products/full` — create product with variants and configs
-- `GET /admin/products/` — list admin products
-- `GET /admin/products/{product_id}` — get product data for edit
-- `PUT /admin/products/{product_id}` — update product
-- `DELETE /admin/products/{product_id}` — delete product
-- `POST /admin/products/{product_id}/restore` — restore deleted product
-- `GET /admin/order/` — list all orders
-- `PUT /admin/order/{order_id}` — update order status
-
-## Notes
-
-- Backend CORS allows local frontend development on `http://localhost:5173` and `http://127.0.0.1:5173`.
-- The backend uses `.env` values in `database/db.py`, `auth/jwt_handler.py`, and `utils/cloudinary_config.py`.
-- Product configuration and cart payloads support variant selection, custom config options, and size breakdown data.
-
-## Development tips
-
-- Run the backend from `Back-end/app`.
-- Run the frontend from `Front-end`.
-- Use the FastAPI docs at `http://127.0.0.1:8000/docs` after starting the backend.
 
